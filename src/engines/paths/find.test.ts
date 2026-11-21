@@ -251,7 +251,7 @@ it('reports a target that no equation solves for', () => {
     const valid = findPaths(kb!, {
       targetId: 'q.power',
       knownIds: ['q.voltage', 'q.current'],
-      confirmedConditionIds: ['cond.same-element'],
+      confirmedConditionIds: ['cond.same-element', 'cond.steady-current'],
       depthLimit: 2,
     });
     expect(valid.paths[0]?.conditionsStatus).toBe('confirmed');
