@@ -86,7 +86,46 @@ describe('unit conversion', () => {
     });
   });
 
-  it('reports unknown units', () => {
+  it('returns the same value for an identity conversion', () => {
+    const result = convertUnit(12.5, 'unit.meter', 'unit.meter', units);
+    expect(result.ok && result.value).toBeCloseTo(12.5, 12);
+  });
+
+it('blocks invalid factors and offsets instead of producing nonsense', () => {
+    const brokenFactor = new Map<string, Unit>([
+      ['unit.a', makeUnit('unit.a', 'a', 'dim.length', 0, 0, 'length')],
+      ['unit.b', makeUnit('unit.b', 'b', 'dim.length', 1, 0, 'length')],
+    ]);
+    expect(convertUnit(1, 'unit.a', 'unit.b', brokenFactor)).toMatchObject({
+      ok: false,
+      code: 'invalid-unit',
+    });
+
+    const brokenOffset = new Map<string, Unit>([
+      ['unit.c', makeUnit('unit.c', 'c', 'dim.length', 1, Number.NaN, 'length')],
+      ['unit.m', makeUnit('unit.m', 'm', 'dim.length', 1, 0, 'length')],
+    ]);
+    expect(convertUnit(1, 'unit.c', 'unit.m', brokenOffset)).toMatchObject({
+      ok: false,
+      code: 'invalid-unit',
+    });
+  });
+
+it('combines scale and offset correctly', () => {
+    const custom = new Map<string, Unit>([
+      ['unit.custom', makeUnit('unit.custom', 'cu', 'dim.length', 2, 10, 'length')],
+      ['unit.base', makeUnit('unit.base', 'bu', 'dim.length', 1, 0, 'length')],
+    ]);
+    const toBase = convertUnit(0, 'unit.custom', 'unit.base', custom);
+    expect(toBase.ok).toBe(true);
+    if (toBase.ok) expect(toBase.value).toBeCloseTo(10, 12);
+
+    const back = convertUnit(10, 'unit.base', 'unit.custom', custom);
+    expect(back.ok).toBe(true);
+    if (back.ok) expect(back.value).toBeCloseTo(0, 12);
+  });
+
+it('reports unknown units', () => {
     expect(convertUnit(1, 'unit.meter', 'unit.unknown', units)).toMatchObject({
       ok: false,
       code: 'unknown-unit',

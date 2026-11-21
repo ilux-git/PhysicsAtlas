@@ -51,8 +51,16 @@ describe('dimension algebra', () => {
     expect(formatDimension(dims('sqrt(a ^ 2)'))).toBe('L·T⁻²');
   });
 
-  it('rejects adding incompatible dimensions', () => {
+  it('rejects adding and subtracting incompatible dimensions', () => {
     expect(() => dims('s + t')).toThrowError(/Нельзя складывать/);
+    expect(() => dims('s - t')).toThrowError(/Нельзя вычитать/);
+  });
+
+it('handles negative powers and dimensionless expressions', () => {
+    expect(formatDimension(dims('a^-2'))).toBe('L⁻²·T⁴');
+    expect(formatDimension(dims('2'))).toContain('безразмерная');
+    expect(formatDimension(dims('sqrt(4)'))).toContain('безразмерная');
+    expect(formatDimension(dims('s / s'))).toContain('безразмерная');
   });
 
   it('rejects a square root with odd exponents', () => {

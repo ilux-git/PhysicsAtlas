@@ -144,7 +144,25 @@ describe('computational path search', () => {
     expect(path.review.expert).toBe('none');
   });
 
-  it('respects the depth limit and explains the failure', () => {
+  it('converts a numeric result into the requested target unit', () => {
+    const result = findPaths(kb!, {
+      targetId: 'q.displacement',
+      knownIds: ['q.velocity', 'q.time'],
+      depthLimit: 2,
+      targetUnitId: 'unit.kilometer',
+      values: new Map([
+        ['q.velocity', { value: 10, unitId: 'unit.meter-per-second' }],
+        ['q.time', { value: 3600, unitId: 'unit.second' }],
+      ]),
+    });
+    const path = result.paths[0];
+    expect(path?.computation.status).toBe('numeric');
+    expect(path?.steps[0]?.computed?.unitId).toBe('unit.kilometer');
+    expect(path?.steps[0]?.computed?.value).toBeCloseTo(36, 10);
+    expect(path?.steps[0]?.computed?.siValue).toBeCloseTo(36000, 10);
+  });
+
+it('respects the depth limit and explains the failure', () => {
     const result = findPaths(kb!, { targetId: 'q.power', knownIds: MECHANICS_KNOWN, depthLimit: 2 });
     expect(result.paths).toHaveLength(0);
     expect(result.reason).toContain('глубине');
