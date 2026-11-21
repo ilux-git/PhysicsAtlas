@@ -26,10 +26,15 @@ export interface LevelPresentation {
 
 export type LevelPresentations = Partial<Record<LevelKey, LevelPresentation>>;
 
-export type ReviewStatus = 'standard-form' | 'draft' | 'needs-review';
+export type FormulationKind = 'standard-school' | 'definition' | 'derived' | 'draft';
+
+export type ExpertReviewStatus = 'none' | 'requested' | 'completed' | 'rejected';
 
 export interface Review {
-  status: ReviewStatus;
+  formulation: FormulationKind;
+  expert: ExpertReviewStatus;
+  reviewer?: string;
+  reviewedAt?: string;
   note?: LocalizedText;
 }
 
@@ -83,7 +88,6 @@ export interface Equation extends EntityBase {
   lawRefs: string[];
   conditionRefs: string[];
   form: EquationForm;
-  physicalReview: ReviewStatus;
   conditionsStatus: ConditionsStatus;
 }
 
@@ -113,7 +117,7 @@ export interface DerivationStep {
   precondition?: string;
 }
 
-export type DerivationVerification = 'draft' | 'structural' | 'verified';
+export type DerivationVerification = 'draft' | 'structural';
 
 export interface Derivation extends EntityBase {
   kind: 'derivation';

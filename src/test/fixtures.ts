@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   Condition,
   Derivation,
   Dimension,
@@ -25,7 +25,7 @@ const base = (id: string, name: string) => ({
   levelPresentations: {},
   domains: ['domain.mechanics'],
   sources: ['source.test'],
-  review: { status: 'standard-form' } as const,
+  review: { formulation: 'standard-school', expert: 'none' } as const,
 });
 
 export function makeValidInput(): KnowledgeInput {
@@ -147,7 +147,6 @@ export function makeValidInput(): KnowledgeInput {
       lawRefs: ['law.motion'],
       conditionRefs: ['cond.nonzero-time'],
       form: { kind: 'magnitudes' },
-      physicalReview: 'standard-form',
       conditionsStatus: 'explicit',
     },
     {
@@ -164,7 +163,6 @@ export function makeValidInput(): KnowledgeInput {
       lawRefs: [],
       conditionRefs: ['cond.nonzero-speed'],
       form: { kind: 'magnitudes' },
-      physicalReview: 'standard-form',
       conditionsStatus: 'explicit',
     },
   ];

@@ -22,7 +22,6 @@ function equationWith(id: string, lhsAst: AstNode, rhsAst: AstNode): Equation {
     lawRefs: [],
     conditionRefs: [],
     form: { kind: 'magnitudes' },
-    physicalReview: 'draft',
     conditionsStatus: 'missing',
   };
 }

@@ -2,6 +2,8 @@ import type {
   AstNode,
   Condition,
   Equation,
+  ExpertReviewStatus,
+  FormulationKind,
   KnowledgeBase,
   Quantity,
 } from '../../domain/types.ts';
@@ -26,7 +28,26 @@ export interface FindPathsOptions {
   targetUnitId?: string;
 }
 
-export type PathStatus = 'valid' | 'conditional' | 'invalid';
+export type ComputationStatus = 'numeric' | 'symbolic' | 'failed';
+
+export type PathConditionsStatus =
+  | 'not-required'
+  | 'confirmed'
+  | 'partial'
+  | 'unconfirmed'
+  | 'violated';
+
+export type FormulationSummary = FormulationKind | 'mixed';
+
+export interface PathReview {
+  formulation: FormulationSummary;
+  expert: ExpertReviewStatus;
+  perEquation: Array<{
+    equationId: string;
+    formulation: FormulationKind;
+    expert: ExpertReviewStatus;
+  }>;
+}
 
 export interface PathStep {
   equation: Equation;
@@ -39,15 +60,18 @@ export interface PathStep {
 export interface PathCondition {
   condition: Condition;
   status: 'confirmed' | 'unconfirmed' | 'violated';
+  requiredBy: string[];
 }
 
 export interface PathResult {
   id: string;
   targetId: string;
-  status: PathStatus;
+  computation: { status: ComputationStatus; messages: string[] };
+  conditionsStatus: PathConditionsStatus;
+  review: PathReview;
   steps: PathStep[];
   conditions: PathCondition[];
-  warnings: string[];
+  unverifiedConstraints: string[];
   notes: string[];
   knownIds: string[];
 }
@@ -68,7 +92,7 @@ interface RawStep {
 interface RawChain {
   steps: RawStep[];
   conditionIds: string[];
-  warnings: string[];
+  unverifiedConstraints: string[];
   notes: string[];
 }
 
@@ -79,7 +103,7 @@ function quantityVariables(ast: AstNode): string[] {
 function mapPrecondition(
   precondition: SolvePrecondition,
   kb: KnowledgeBase,
-): { conditionId: string } | { warning: string } {
+): { conditionId: string } | { constraint: string } {
   if (precondition.quantityId) {
     const condition = kb.conditions.find(
       (item) =>
@@ -88,18 +112,11 @@ function mapPrecondition(
     );
     if (condition) return { conditionId: condition.id };
   }
-  return { warning: `Математическое ограничение: ${precondition.text}` };
+  return { constraint: `Непроверенное ограничение: ${precondition.text}` };
 }
 
-function equationWarnings(
-  equation: Equation,
-  kb: KnowledgeBase,
-): { warnings: string[]; notes: string[] } {
-  const warnings: string[] = [];
+function equationNotes(equation: Equation, kb: KnowledgeBase): string[] {
   const notes: string[] = [];
-  if (equation.physicalReview !== 'standard-form') {
-    warnings.push(`Физическая корректность «${equation.id}» не подтверждена (статус «${equation.physicalReview}»).`);
-  }
   if (equation.form.kind === 'magnitudes') {
     const variables = new Set([...quantityVariables(equation.lhsAst), ...quantityVariables(equation.rhsAst)]);
     const hasVector = [...variables].some(
@@ -111,7 +128,7 @@ function equationWarnings(
       );
     }
   }
-  return { warnings, notes };
+  return notes;
 }
 
 export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPathsResult {
@@ -183,7 +200,7 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     );
     const steps: RawStep[] = [];
     const conditionIds: string[] = [];
-    const warnings: string[] = [];
+    const unverifiedConstraints: string[] = [];
     const notes: string[] = [];
     const availableExtended = new Set(available);
     const nextVisited = new Set(visited);
@@ -195,19 +212,17 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
       if (!sub) return null;
       steps.push(...sub.steps);
       conditionIds.push(...sub.conditionIds);
-      warnings.push(...sub.warnings);
+      unverifiedConstraints.push(...sub.unverifiedConstraints);
       notes.push(...sub.notes);
       availableExtended.add(unknownId);
     }
 
-    const own = equationWarnings(candidate.equation, kb);
-    warnings.push(...own.warnings);
-    notes.push(...own.notes);
+    notes.push(...equationNotes(candidate.equation, kb));
     conditionIds.push(...candidate.equation.conditionRefs);
     for (const precondition of candidate.preconditions) {
       const mapped = mapPrecondition(precondition, kb);
       if ('conditionId' in mapped) conditionIds.push(mapped.conditionId);
-      else warnings.push(mapped.warning);
+      else unverifiedConstraints.push(mapped.constraint);
     }
 
     steps.push({
@@ -220,7 +235,7 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     return {
       steps,
       conditionIds: [...new Set(conditionIds)],
-      warnings: [...new Set(warnings)],
+      unverifiedConstraints: [...new Set(unverifiedConstraints)],
       notes: [...new Set(notes)],
     };
   };
@@ -231,7 +246,9 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     depth: number,
     visited: Set<string>,
   ): RawChain | null => {
-    if (available.has(quantityId)) return { steps: [], conditionIds: [], warnings: [], notes: [] };
+    if (available.has(quantityId)) {
+      return { steps: [], conditionIds: [], unverifiedConstraints: [], notes: [] };
+    }
     if (depth <= 0) return null;
     if (visited.has(quantityId)) return null;
     for (const candidate of candidatesFor(quantityId)) {
@@ -241,11 +258,39 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     return null;
   };
 
+  const reviewFor = (steps: RawStep[]): PathReview => {
+    const perEquation: PathReview['perEquation'] = [];
+    const seen = new Set<string>();
+    for (const step of steps) {
+      if (seen.has(step.equation.id)) continue;
+      seen.add(step.equation.id);
+      perEquation.push({
+        equationId: step.equation.id,
+        formulation: step.equation.review.formulation,
+        expert: step.equation.review.expert,
+      });
+    }
+    const formulations = new Set(perEquation.map((item) => item.formulation));
+    const formulation: FormulationSummary =
+      formulations.size === 1 ? [...formulations][0] : 'mixed';
+    const severity: Record<ExpertReviewStatus, number> = {
+      rejected: 3,
+      requested: 2,
+      none: 1,
+      completed: 0,
+    };
+    let expert: ExpertReviewStatus = perEquation.length === 0 ? 'none' : 'completed';
+    for (const item of perEquation) {
+      if (severity[item.expert] > severity[expert]) expert = item.expert;
+    }
+    return { formulation, expert, perEquation };
+  };
+
   const buildPath = (chain: RawChain): PathResult => {
     const evaluationValues = new Map(valuesSI);
     const steps: PathStep[] = [];
     let evaluationFailed = false;
-    const evaluationWarnings: string[] = [];
+    const evaluationMessages: string[] = [];
 
     for (const step of chain.steps) {
       let computed: PathStep['computed'] = null;
@@ -270,7 +315,7 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
           }
         } catch (error) {
           evaluationFailed = true;
-          evaluationWarnings.push(
+          evaluationMessages.push(
             error instanceof EvaluationError
               ? `Численный расчёт остановлен: ${error.message}`
               : 'Численный расчёт остановлен из-за ошибки.',
@@ -286,6 +331,22 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
       });
     }
 
+    const requiredBy = new Map<string, Set<string>>();
+    const addRequiredBy = (conditionId: string, equationId: string): void => {
+      const set = requiredBy.get(conditionId) ?? new Set<string>();
+      set.add(equationId);
+      requiredBy.set(conditionId, set);
+    };
+    for (const step of chain.steps) {
+      for (const conditionId of step.equation.conditionRefs) {
+        addRequiredBy(conditionId, step.equation.id);
+      }
+      for (const precondition of step.preconditions) {
+        const mapped = mapPrecondition(precondition, kb);
+        if ('conditionId' in mapped) addRequiredBy(mapped.conditionId, step.equation.id);
+      }
+    }
+
     const conditions: PathCondition[] = [];
     for (const conditionId of chain.conditionIds) {
       const condition = kb.conditions.find((item) => item.id === conditionId);
@@ -299,26 +360,45 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
         const quantityId = condition.structured.quantityId;
         if (quantityId && evaluationValues.get(quantityId) === 0) status = 'violated';
       }
-      conditions.push({ condition, status });
+      conditions.push({
+        condition,
+        status,
+        requiredBy: [...(requiredBy.get(conditionId) ?? [])].sort(),
+      });
     }
 
-    const warnings = [...chain.warnings, ...evaluationWarnings];
     const hasViolated = conditions.some((condition) => condition.status === 'violated');
-    const unconfirmed = conditions.filter((condition) => condition.status === 'unconfirmed').length;
-    const status: PathStatus =
-      hasViolated || evaluationFailed
-        ? 'invalid'
-        : unconfirmed > 0 || warnings.length > 0
-          ? 'conditional'
-          : 'valid';
+    const confirmedCount = conditions.filter((condition) => condition.status === 'confirmed').length;
+    const conditionsStatus: PathConditionsStatus =
+      conditions.length === 0 && chain.unverifiedConstraints.length === 0
+        ? 'not-required'
+        : hasViolated
+          ? 'violated'
+          : chain.unverifiedConstraints.length > 0
+            ? confirmedCount > 0
+              ? 'partial'
+              : 'unconfirmed'
+            : confirmedCount === conditions.length
+              ? 'confirmed'
+              : confirmedCount > 0
+                ? 'partial'
+                : 'unconfirmed';
+
+    const computationStatus: ComputationStatus = evaluationFailed
+      ? 'failed'
+      : steps.length > 0 && steps.every((step) => step.computed !== null)
+        ? 'numeric'
+        : 'symbolic';
 
     return {
       id: `${options.targetId}:${chain.steps.map((step) => `${step.equation.id}>${step.targetId}`).join('|')}`,
       targetId: options.targetId,
-      status,
+      computation: { status: computationStatus, messages: evaluationMessages },
+      conditionsStatus,
+      review: reviewFor(chain.steps),
       steps,
       conditions,
-      warnings,
+      unverifiedConstraints: chain.unverifiedConstraints,
       notes: chain.notes,
       knownIds: [...known],
     };
@@ -331,10 +411,12 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
         {
           id: `${options.targetId}:known`,
           targetId: options.targetId,
-          status: 'valid',
+          computation: { status: 'symbolic', messages: [] },
+          conditionsStatus: 'not-required',
+          review: { formulation: 'mixed', expert: 'none', perEquation: [] },
           steps: [],
           conditions: [],
-          warnings: [],
+          unverifiedConstraints: [],
           notes: ['Целевая величина уже среди известных.'],
           knownIds: [...known],
         },
@@ -354,9 +436,21 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     paths.push(path);
   }
 
+  const conditionWeight = (path: PathResult): number => {
+    if (path.conditionsStatus === 'violated') return 3;
+    if (path.conditionsStatus === 'unconfirmed') return 2;
+    if (path.conditionsStatus === 'partial') return 1;
+    return 0;
+  };
+  const computationWeight = (path: PathResult): number =>
+    path.computation.status === 'failed' ? 2 : path.computation.status === 'symbolic' ? 1 : 0;
   paths.sort((left, right) => {
-    const weight: Record<PathStatus, number> = { valid: 0, conditional: 1, invalid: 2 };
-    if (weight[left.status] !== weight[right.status]) return weight[left.status] - weight[right.status];
+    if (computationWeight(left) !== computationWeight(right)) {
+      return computationWeight(left) - computationWeight(right);
+    }
+    if (conditionWeight(left) !== conditionWeight(right)) {
+      return conditionWeight(left) - conditionWeight(right);
+    }
     const leftUnconfirmed = left.conditions.filter((condition) => condition.status === 'unconfirmed').length;
     const rightUnconfirmed = right.conditions.filter((condition) => condition.status === 'unconfirmed').length;
     if (leftUnconfirmed !== rightUnconfirmed) return leftUnconfirmed - rightUnconfirmed;

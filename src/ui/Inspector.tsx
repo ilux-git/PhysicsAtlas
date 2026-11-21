@@ -18,7 +18,13 @@ import { equationStatuses, verifyDerivation } from '../engines/equation.ts';
 import { AstTree } from './AstView.tsx';
 import { EntityChip } from './EntityChip.tsx';
 import { Formula } from './Formula.tsx';
-import { ENTITY_KIND_LABELS, REVIEW_LABELS, entityShortLabel, formatNumber } from './labels.ts';
+import {
+  ENTITY_KIND_LABELS,
+  EXPERT_LABELS,
+  FORMULATION_LABELS,
+  entityShortLabel,
+  formatNumber,
+} from './labels.ts';
 import { equationStatusChips, StatusChips, type ChipItem } from './StatusChips.tsx';
 
 function Section({
@@ -94,12 +100,25 @@ function conditionConstraint(condition: Condition, entityName: (id: string) => s
 }
 
 function statusChipsForReview(entity: Entity): ChipItem[] {
+  const expertTone =
+    entity.review.expert === 'completed'
+      ? 'ok'
+      : entity.review.expert === 'rejected'
+        ? 'danger'
+        : 'warning';
   return [
     {
-      label: `статус записи: ${REVIEW_LABELS[entity.review.status]}`,
-      tone: entity.review.status === 'standard-form' ? 'accent' : 'warning',
+      label: `формулировка: ${FORMULATION_LABELS[entity.review.formulation]}`,
+      tone: entity.review.formulation === 'draft' ? 'warning' : 'accent',
+      title: 'Тип и происхождение записи; не является результатом физической экспертизы.',
+    },
+    {
+      label: `экспертиза: ${EXPERT_LABELS[entity.review.expert]}`,
+      tone: expertTone,
       title:
-        'Статус описывает происхождение формулировки; независимая физическая экспертиза проекта не проводилась.',
+        entity.review.expert === 'completed' && entity.review.reviewer
+          ? `Рецензент: ${entity.review.reviewer}${entity.review.reviewedAt ? `, ${entity.review.reviewedAt}` : ''}`
+          : 'Независимая физическая экспертиза не подтверждена записью рецензента.',
     },
   ];
 }
@@ -285,7 +304,7 @@ function EquationBody({ equation }: { equation: Equation }) {
         )}
       </Section>
 
-      <Section title="Условия применимости" hint="Без подтверждения условий вычислительный путь помечается как условно допустимый.">
+      <Section title="Условия применимости" hint="Без подтверждения условий вычислительный путь нельзя считать применимым.">
         {conditions.length === 0 ? (
           <p className="empty-note">Условия не указаны.</p>
         ) : (
@@ -511,9 +530,8 @@ function DerivationBody({ derivation }: { derivation: Derivation }) {
           <EntityChip id={derivation.targetEquationId} />
         </div>
         <p className="caveat">
-          {derivation.verificationStatus === 'verified'
-            ? 'Вывод проверен.'
-            : 'Структурная проверка: сравнение преобразованной формы с целевым уравнением. Символьного доказательства нет.'}
+          Структурная проверка: сравнение преобразованной формы с целевым уравнением. Это не
+          символьное доказательство и не физическая экспертиза.
         </p>
         {check && (
           <p className={check.ok ? 'check-ok' : 'check-fail'}>

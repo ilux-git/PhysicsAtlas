@@ -30,7 +30,13 @@ const levelPresentationsSchema = z
 
 const reviewSchema = z
   .object({
-    status: z.enum(['standard-form', 'draft', 'needs-review']),
+    formulation: z.enum(['standard-school', 'definition', 'derived', 'draft']),
+    expert: z.enum(['none', 'requested', 'completed', 'rejected']),
+    reviewer: z.string().min(1).optional(),
+    reviewedAt: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
     note: localizedTextSchema.optional(),
   })
   .strict();
@@ -137,7 +143,6 @@ export const equationSchema = entityBaseSchema
         note: localizedTextSchema.optional(),
       })
       .strict(),
-    physicalReview: z.enum(['standard-form', 'draft', 'needs-review']),
     conditionsStatus: z.enum(['explicit', 'missing']),
   })
   .strict();
@@ -189,7 +194,7 @@ export const derivationSchema = entityBaseSchema
     targetEquationId: z.string().min(3),
     steps: z.array(derivationStepSchema).min(1),
     preconditions: z.array(z.string()),
-    verificationStatus: z.enum(['draft', 'structural', 'verified']),
+    verificationStatus: z.enum(['draft', 'structural']),
   })
   .strict();
 

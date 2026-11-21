@@ -30,7 +30,8 @@ describe('atlas application', () => {
       screen.getByRole('heading', { level: 2, name: 'Второй закон Ньютона (модули)' }),
     ).toBeInTheDocument();
     expect(screen.getByText(/размерности: ок/)).toBeInTheDocument();
-    expect(screen.getByText(/экспертиза: стандартная школьная формулировка/)).toBeInTheDocument();
+    expect(screen.getAllByText(/формулировка: стандартная школьная запись/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/экспертиза: не проводилась/).length).toBeGreaterThan(0);
     expect(screen.getByText(/условия: указаны/)).toBeInTheDocument();
     expect(screen.getByText(/Размерностная проверка не заменяет физическую экспертизу/)).toBeInTheDocument();
   });
@@ -102,7 +103,9 @@ it('finds the mechanics chain and marks it conditionally valid', async () => {
     renderApp();
     await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
 
-    expect(screen.getAllByText('условно допустимый').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/вычисления: символьная цепочка/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/условия: не подтверждены/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/экспертиза: не проводилась/).length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { level: 3, name: 'Условия применимости' })).toBeInTheDocument();
     expect(document.querySelectorAll('.path-card').length).toBeGreaterThan(0);
     const statuses = screen.getAllByLabelText(/Статус условия/);
@@ -117,8 +120,9 @@ it('finds the mechanics chain and marks it conditionally valid', async () => {
     for (const select of conditionSelects) {
       await user.selectOptions(select, 'confirmed');
     }
-    expect(screen.getAllByText('допустимый').length).toBeGreaterThan(0);
-    expect(screen.queryAllByText('условно допустимый')).toHaveLength(0);
+    expect(screen.getAllByText(/условия: подтверждены/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/экспертиза: не проводилась/).length).toBeGreaterThan(0);
+    expect(screen.queryAllByText(/допустимый/)).toHaveLength(0);
   });
 
   it('computes numeric results for the chain with units', async () => {
@@ -138,7 +142,7 @@ it('finds the mechanics chain and marks it conditionally valid', async () => {
     await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
     const inertial = screen.getByLabelText(/Статус условия «Инерциальная система отсчёта»/);
     await user.selectOptions(inertial, 'violated');
-    expect(screen.getAllByText('недопустимый').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/условия: нарушены/).length).toBeGreaterThan(0);
   });
 
   it('converts units and rejects incompatible ones', async () => {

@@ -9,7 +9,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 1, "M": 0, "T": 0, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -22,7 +22,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 0, "M": 1, "T": 0, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -35,7 +35,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 0, "M": 0, "T": 1, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -48,7 +48,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 1, "M": 0, "T": -1, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -61,7 +61,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 1, "M": 0, "T": -2, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -74,7 +74,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 1, "M": 1, "T": -2, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -87,7 +87,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 2, "M": 1, "T": -2, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -100,7 +100,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 2, "M": 1, "T": -3, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -113,7 +113,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 0, "M": 0, "T": 0, "I": 0, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -126,7 +126,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 0, "M": 0, "T": 0, "I": 1, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -139,7 +139,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 0, "M": 0, "T": 1, "I": 1, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -152,7 +152,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 2, "M": 1, "T": -3, "I": -1, "Th": 0, "N": 0, "J": 0 }
   },
   {
@@ -165,7 +165,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.si-brochure-2019"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "exponents": { "L": 2, "M": 1, "T": -3, "I": -2, "Th": 0, "N": 0, "J": 0 }
   }
 ]

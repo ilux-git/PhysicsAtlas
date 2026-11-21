@@ -51,7 +51,6 @@ function cyclicKnowledge(): KnowledgeInput {
     lawRefs: [],
     conditionRefs: [],
     form: { kind: 'magnitudes' },
-    physicalReview: 'draft',
     conditionsStatus: 'missing',
   };
   const equationB: Equation = {
@@ -68,7 +67,6 @@ function cyclicKnowledge(): KnowledgeInput {
     lawRefs: [],
     conditionRefs: [],
     form: { kind: 'magnitudes' },
-    physicalReview: 'draft',
     conditionsStatus: 'missing',
   };
   input.quantities.push(quantityA, quantityB);
@@ -92,20 +90,24 @@ describe('computational path search', () => {
       'eq.power.average',
     ]);
     expect(path.steps.map((step) => step.targetId)).toEqual(['q.force', 'q.work', 'q.power']);
-    expect(path.status).toBe('conditional');
+    expect(path.computation.status).toBe('symbolic');
+    expect(path.conditionsStatus).toBe('unconfirmed');
+    expect(path.review.expert).toBe('none');
     expect(path.conditions.map((condition) => condition.condition.id).sort()).toEqual(
       [...MECHANICS_CONDITIONS].sort(),
     );
+    expect(path.conditions.every((condition) => condition.requiredBy.length > 0)).toBe(true);
   });
 
-  it('becomes valid when all conditions are confirmed', () => {
+  it('reports confirmed conditions without claiming physical review', () => {
     const result = findPaths(kb!, {
       targetId: 'q.power',
       knownIds: MECHANICS_KNOWN,
       confirmedConditionIds: MECHANICS_CONDITIONS,
       depthLimit: 3,
     });
-    expect(result.paths[0]?.status).toBe('valid');
+    expect(result.paths[0]?.conditionsStatus).toBe('confirmed');
+    expect(result.paths[0]?.review.expert).toBe('none');
     expect(result.paths[0]?.notes.join(' ')).toContain('модули векторных величин');
   });
 
@@ -118,7 +120,7 @@ describe('computational path search', () => {
       depthLimit: 3,
     });
     const path = result.paths.find((item) => item.conditions.some((condition) => condition.status === 'violated'));
-    expect(path?.status).toBe('invalid');
+    expect(path?.conditionsStatus).toBe('violated');
   });
 
   it('evaluates the chain numerically with units', () => {
@@ -156,7 +158,8 @@ describe('computational path search', () => {
   it('returns a trivial valid path when the target is already known', () => {
     const result = findPaths(kb!, { targetId: 'q.force', knownIds: ['q.force'], depthLimit: 3 });
     expect(result.paths).toHaveLength(1);
-    expect(result.paths[0]?.status).toBe('valid');
+    expect(result.paths[0]?.computation.status).toBe('symbolic');
+    expect(result.paths[0]?.conditionsStatus).toBe('not-required');
     expect(result.paths[0]?.steps).toHaveLength(0);
   });
 
@@ -169,7 +172,7 @@ describe('computational path search', () => {
     expect(conditional.paths[0]?.steps.map((step) => step.equation.id)).toEqual([
       'eq.power.electric',
     ]);
-    expect(conditional.paths[0]?.status).toBe('conditional');
+    expect(conditional.paths[0]?.conditionsStatus).toBe('unconfirmed');
 
     const valid = findPaths(kb!, {
       targetId: 'q.power',
@@ -177,7 +180,8 @@ describe('computational path search', () => {
       confirmedConditionIds: ['cond.same-element'],
       depthLimit: 2,
     });
-    expect(valid.paths[0]?.status).toBe('valid');
+    expect(valid.paths[0]?.conditionsStatus).toBe('confirmed');
+    expect(valid.paths[0]?.review.expert).toBe('none');
   });
 
   it('builds a cross-domain chain U, R → I → P', () => {
@@ -190,6 +194,23 @@ describe('computational path search', () => {
       'eq.ohm.current',
       'eq.power.electric',
     ]);
+  });
+
+  it('keeps a path containing a formula pending review visibly unreviewed', () => {
+    const input = makeValidInput();
+    const equation = input.equations.find((item) => item.id === 'eq.speed');
+    if (!equation) throw new Error('Нет уравнения eq.speed');
+    equation.review = { formulation: 'draft', expert: 'requested' };
+    const { kb: reviewed } = buildKnowledgeBase(input);
+    const result = findPaths(reviewed!, {
+      targetId: 'q.speed',
+      knownIds: ['q.distance', 'q.time'],
+      confirmedConditionIds: ['cond.nonzero-time'],
+      depthLimit: 2,
+    });
+    expect(result.paths[0]?.review.expert).toBe('requested');
+    expect(result.paths[0]?.review.formulation).toBe('draft');
+    expect(result.paths[0]?.conditionsStatus).toBe('confirmed');
   });
 
   it('terminates on cyclic computational dependencies', () => {

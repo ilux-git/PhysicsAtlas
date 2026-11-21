@@ -104,9 +104,8 @@ export function DerivationView() {
           <EntityChip id={derivation.targetEquationId} />
         </div>
         <p className="caveat">
-          {derivation.verificationStatus === 'verified'
-            ? 'Вывод проверен.'
-            : 'Структурная проверка: сравнение преобразованной формы с целевым уравнением. Символьного доказательства нет.'}
+          Структурная проверка: сравнение преобразованной формы с целевым уравнением. Это не
+          символьное доказательство и не физическая экспертиза.
         </p>
         {check && (
           <p className={check.ok ? 'check-ok' : 'check-fail'}>

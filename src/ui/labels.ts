@@ -1,4 +1,11 @@
-import type { EdgeKind, Entity, EntityKind, LevelKey, ReviewStatus } from '../domain/types.ts';
+import type {
+  EdgeKind,
+  Entity,
+  EntityKind,
+  ExpertReviewStatus,
+  FormulationKind,
+  LevelKey,
+} from '../domain/types.ts';
 import { LEVEL_LABELS } from '../domain/types.ts';
 import { formatDimension } from '../engines/dimensions.ts';
 
@@ -58,10 +65,18 @@ export const EDGE_KIND_GROUP: Record<EdgeKind, 'physical' | 'mathematical' | 'st
   produces: 'mathematical',
 };
 
-export const REVIEW_LABELS: Record<ReviewStatus, string> = {
-  'standard-form': 'стандартная школьная формулировка',
+export const FORMULATION_LABELS: Record<FormulationKind, string> = {
+  'standard-school': 'стандартная школьная запись',
+  definition: 'определение',
+  derived: 'производная форма',
   draft: 'черновик',
-  'needs-review': 'требует проверки',
+};
+
+export const EXPERT_LABELS: Record<ExpertReviewStatus, string> = {
+  none: 'не проводилась',
+  requested: 'запрошена',
+  completed: 'проведена рецензентом',
+  rejected: 'отклонена рецензентом',
 };
 
 export function levelLabel(level: LevelKey): string {

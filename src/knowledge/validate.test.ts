@@ -107,4 +107,25 @@ describe('knowledge base validation', () => {
     const { diagnostics } = buildKnowledgeBase(input);
     expect(codes(diagnostics)).toContain('unit-group-dimension');
   });
+
+  it('rejects a completed expert review without reviewer and date', () => {
+    const input = mutated((kb) => {
+      kb.quantities[0].review = { formulation: 'standard-school', expert: 'completed' };
+    });
+    const { diagnostics } = buildKnowledgeBase(input);
+    expect(codes(diagnostics)).toContain('review-incomplete');
+  });
+
+  it('accepts a completed expert review with reviewer, date and source', () => {
+    const input = mutated((kb) => {
+      kb.quantities[0].review = {
+        formulation: 'standard-school',
+        expert: 'completed',
+        reviewer: 'Тестовый рецензент',
+        reviewedAt: '2026-11-22',
+      };
+    });
+    const { diagnostics } = buildKnowledgeBase(input);
+    expect(codes(diagnostics)).not.toContain('review-incomplete');
+  });
 });

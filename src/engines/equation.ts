@@ -1,5 +1,11 @@
 import { astEquals } from '../domain/ast.ts';
-import type { Derivation, Equation, KnowledgeBase } from '../domain/types.ts';
+import type {
+  Derivation,
+  Equation,
+  ExpertReviewStatus,
+  FormulationKind,
+  KnowledgeBase,
+} from '../domain/types.ts';
 import { astToInfix } from './ast/parse.ts';
 import { solveFor, solvedSideVariable } from './ast/solve.ts';
 import { validateAst } from './ast/validate.ts';
@@ -17,7 +23,8 @@ export interface StatusDetail {
 export interface EquationStatuses {
   structural: StatusDetail;
   dimensional: StatusDetail & { dimension?: string };
-  physicalReview: Equation['physicalReview'];
+  formulation: FormulationKind;
+  expert: ExpertReviewStatus;
   conditionsStatus: Equation['conditionsStatus'];
 }
 
@@ -63,7 +70,8 @@ export function equationStatuses(equation: Equation, kb: KnowledgeBase): Equatio
       dimensionalMessages.length === 0
         ? { status: 'ok', messages: [], ...(dimensionLabel ? { dimension: dimensionLabel } : {}) }
         : { status: 'invalid', messages: dimensionalMessages },
-    physicalReview: equation.physicalReview,
+    formulation: equation.review.formulation,
+    expert: equation.review.expert,
     conditionsStatus: equation.conditionsStatus,
   };
 }

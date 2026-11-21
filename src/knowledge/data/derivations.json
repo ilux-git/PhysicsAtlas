@@ -11,7 +11,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "sourceEquationId": "eq.newton2.magnitudes",
     "targetEquationId": "eq.newton2.acceleration",
     "steps": [
@@ -46,7 +46,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "sourceEquationId": "eq.work.constant-force",
     "targetEquationId": "eq.work.force",
     "steps": [
@@ -81,7 +81,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "sourceEquationId": "eq.power.average",
     "targetEquationId": "eq.power.time",
     "steps": [
@@ -117,7 +117,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.peryshkin-7-9"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "sourceEquationId": "eq.ohm.local",
     "targetEquationId": "eq.ohm.current",
     "steps": [

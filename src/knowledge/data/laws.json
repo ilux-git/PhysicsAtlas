@@ -18,7 +18,7 @@
     },
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "conditionRefs": ["cond.inertial-frame", "cond.constant-mass"]
   },
   {
@@ -37,7 +37,7 @@
     },
     "domains": ["domain.electricity"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance"]
   }
 ]

@@ -1384,6 +1384,24 @@ code {
   border-color: #fecaca;
 }
 
+.path-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 4px 0 8px;
+}
+
+.path-review {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.path-review ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
 .path-steps {
   margin: 8px 0;
   padding-left: 18px;

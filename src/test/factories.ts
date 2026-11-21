@@ -19,7 +19,7 @@ export function baseEntity(
     levelPresentations,
     domains: ['domain.mechanics'],
     sources: ['source.test'],
-    review: { status: 'standard-form' },
+    review: { formulation: 'standard-school', expert: 'none' },
     ...overrides,
   };
 }

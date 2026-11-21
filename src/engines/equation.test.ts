@@ -20,7 +20,8 @@ describe('equation statuses', () => {
     expect(statuses.structural.status).toBe('ok');
     expect(statuses.dimensional.status).toBe('ok');
     expect(statuses.dimensional.dimension).toBe('L·M·T⁻²');
-    expect(statuses.physicalReview).toBe('standard-form');
+    expect(statuses.formulation).toBe('standard-school');
+    expect(statuses.expert).toBe('none');
     expect(statuses.conditionsStatus).toBe('explicit');
   });
 
@@ -29,7 +30,7 @@ describe('equation statuses', () => {
     const scaled: Equation = {
       ...structuredClone(source),
       id: 'eq.test.scaled',
-      physicalReview: 'draft',
+      review: { ...source.review, formulation: 'draft' },
       rhsAst: {
         type: 'multiply',
         left: { type: 'constant', name: '2', value: 2 },
@@ -38,7 +39,8 @@ describe('equation statuses', () => {
     };
     const statuses = equationStatuses(scaled, kb!);
     expect(statuses.dimensional.status).toBe('ok');
-    expect(statuses.physicalReview).toBe('draft');
+    expect(statuses.formulation).toBe('draft');
+    expect(statuses.expert).toBe('none');
   });
 
   it('reports a dimensional mismatch with the reason', () => {
@@ -108,7 +110,6 @@ describe('derivation verification', () => {
       lawRefs: [],
       conditionRefs: [],
       form: { kind: 'magnitudes' as const },
-      physicalReview: 'draft' as const,
       conditionsStatus: 'missing' as const,
     };
     const derivation = {

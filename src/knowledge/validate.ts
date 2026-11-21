@@ -78,6 +78,36 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
     if (entity.sources.length === 0) {
       warn('source-missing', `У сущности «${entity.id}» не указан источник.`, entity.id);
     }
+    if (entity.review.expert === 'completed') {
+      if (!entity.review.reviewer) {
+        error(
+          'review-incomplete',
+          `Экспертиза «${entity.id}» отмечена завершённой без имени рецензента.`,
+          entity.id,
+        );
+      }
+      if (!entity.review.reviewedAt || !/^\d{4}-\d{2}-\d{2}$/.test(entity.review.reviewedAt)) {
+        error(
+          'review-incomplete',
+          `Экспертиза «${entity.id}» отмечена завершённой без корректной даты проверки.`,
+          entity.id,
+        );
+      }
+      if (entity.sources.length === 0) {
+        error(
+          'review-incomplete',
+          `Экспертиза «${entity.id}» отмечена завершённой без источника.`,
+          entity.id,
+        );
+      }
+    }
+    if (entity.review.expert === 'rejected' && !entity.review.note) {
+      error(
+        'review-incomplete',
+        `Отклонённая запись «${entity.id}» должна содержать причину в review.note.`,
+        entity.id,
+      );
+    }
     for (const sourceId of entity.sources) {
       if (!sources.has(sourceId)) {
         error('ref-missing', `Источник «${sourceId}» не существует (сущность «${entity.id}»).`, entity.id);

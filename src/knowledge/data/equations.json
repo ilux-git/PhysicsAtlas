@@ -11,7 +11,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.force" },
     "rhsAst": {
       "type": "multiply",
@@ -26,7 +26,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Запись через модули; направление ускорения совпадает с направлением равнодействующей силы." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -41,7 +40,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.acceleration" },
     "rhsAst": {
       "type": "divide",
@@ -56,7 +55,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Запись через модули; при нулевой массе выражение не определено." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -71,7 +69,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "definition", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.work" },
     "rhsAst": {
       "type": "multiply",
@@ -86,7 +84,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Сила постоянна и направлена вдоль перемещения; угол между силой и перемещением равен нулю." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -101,7 +98,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.force" },
     "rhsAst": {
       "type": "divide",
@@ -116,7 +113,6 @@
       "kind": "magnitudes",
       "note": { "ru": "При нулевом перемещении работа равна нулю, и сила из работы не определяется." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -131,7 +127,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "definition", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.power" },
     "rhsAst": {
       "type": "divide",
@@ -158,7 +154,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Величина средняя за интервал; интервал времени должен быть ненулевым." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -173,7 +168,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.time" },
     "rhsAst": {
       "type": "divide",
@@ -188,7 +183,6 @@
       "kind": "magnitudes",
       "note": { "ru": "При нулевой мощности время из работы не определяется." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -203,7 +197,7 @@
     "levelPresentations": {},
     "domains": ["domain.mechanics"],
     "sources": ["source.peryshkin-7-9"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "definition", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.velocity" },
     "rhsAst": {
       "type": "divide",
@@ -218,7 +212,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Запись через модули для равномерного движения; при неравномерном движении это средняя скорость." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -233,7 +226,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "standard-school", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.voltage" },
     "rhsAst": {
       "type": "multiply",
@@ -248,7 +241,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Скалярная запись для участка цепи; подразумевается один и тот же участок для U и I." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -263,7 +255,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.current" },
     "rhsAst": {
       "type": "divide",
@@ -278,7 +270,6 @@
       "kind": "magnitudes",
       "note": { "ru": "При нулевом сопротивлении выражение не определено." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -293,7 +284,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "definition", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.charge" },
     "rhsAst": {
       "type": "multiply",
@@ -308,7 +299,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Постоянный ток; при переменном токе нужен интеграл по времени." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   },
   {
@@ -323,7 +313,7 @@
     "levelPresentations": {},
     "domains": ["domain.electricity"],
     "sources": ["source.myakishev-10-11"],
-    "review": { "status": "standard-form" },
+    "review": { "formulation": "derived", "expert": "none" },
     "lhsAst": { "type": "variable", "quantityId": "q.power" },
     "rhsAst": {
       "type": "multiply",
@@ -338,7 +328,6 @@
       "kind": "magnitudes",
       "note": { "ru": "Мощность на элементе: U и I относятся к одному и тому же элементу цепи." }
     },
-    "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
   }
 ]

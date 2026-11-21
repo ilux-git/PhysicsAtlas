@@ -4,12 +4,20 @@ import type { PathResult } from '../engines/paths/find.ts';
 import { findPaths, pathHighlight } from '../engines/paths/find.ts';
 import { astToInfix } from '../engines/ast/parse.ts';
 import { Formula } from './Formula.tsx';
-import { formatNumber } from './labels.ts';
+import { EXPERT_LABELS, FORMULATION_LABELS, formatNumber } from './labels.ts';
 
-const STATUS_LABELS = {
-  valid: 'допустимый',
-  conditional: 'условно допустимый',
-  invalid: 'недопустимый',
+const COMPUTATION_LABELS = {
+  numeric: 'численный расчёт',
+  symbolic: 'символьная цепочка',
+  failed: 'расчёт не выполнен',
+} as const;
+
+const CONDITIONS_LABELS = {
+  'not-required': 'не требуются',
+  confirmed: 'подтверждены',
+  partial: 'подтверждены частично',
+  unconfirmed: 'не подтверждены',
+  violated: 'нарушены',
 } as const;
 
 interface KnownRow {
@@ -95,8 +103,9 @@ export function FindPathPanel() {
       <header className="tool-header">
         <h2>Поиск вычислительного пути</h2>
         <p>
-          Выберите известные величины и целевую величину. Атлас построит цепочку уравнений, проверит условия
-          применимости и покажет статус: допустимый, условно допустимый или недопустимый.
+          Выберите известные величины и целевую величину. Атлас построит цепочку уравнений и покажет
+          отдельно: выполнимость вычислений, состояние условий применимости и состояние физической
+          экспертизы.
         </p>
       </header>
 
@@ -233,8 +242,8 @@ export function FindPathPanel() {
         <section className="tool-section">
           <h3>Условия применимости</h3>
           <p className="section-hint">
-            Пока условие не подтверждено, цепочка остаётся условно допустимой. Отметка «нарушено» делает путь
-            недопустимым.
+            Пока условие не подтверждено, условия пути остаются неподтверждёнными. Отметка «нарушено»
+            переводит условия в состояние «нарушены».
           </p>
           <div className="condition-statuses">
             {usedConditions.map((entry) => (
@@ -268,11 +277,27 @@ export function FindPathPanel() {
         ) : (
           <div className="path-list">
             {result.paths.map((path, index) => (
-              <article key={path.id} className={`path-card status-${path.status}`}>
+              <article key={path.id} className="path-card">
                 <header>
-                  <span className={`status-badge status-${path.status}`}>{STATUS_LABELS[path.status]}</span>
                   <span className="path-rank">путь {index + 1}</span>
                 </header>
+                <div className="path-statuses" aria-label="Характеристики пути">
+                  <span
+                    className={`status-chip tone-${path.computation.status === 'failed' ? 'danger' : path.computation.status === 'numeric' ? 'ok' : 'neutral'}`}
+                  >
+                    вычисления: {COMPUTATION_LABELS[path.computation.status]}
+                  </span>
+                  <span
+                    className={`status-chip tone-${path.conditionsStatus === 'violated' ? 'danger' : path.conditionsStatus === 'confirmed' ? 'ok' : path.conditionsStatus === 'not-required' ? 'neutral' : 'warning'}`}
+                  >
+                    условия: {CONDITIONS_LABELS[path.conditionsStatus]}
+                  </span>
+                  <span
+                    className={`status-chip tone-${path.review.expert === 'completed' ? 'ok' : path.review.expert === 'rejected' ? 'danger' : 'warning'}`}
+                  >
+                    экспертиза: {EXPERT_LABELS[path.review.expert]}
+                  </span>
+                </div>
                 <ol className="path-steps">
                   {path.steps.map((step, stepIndex) => {
                     const targetQuantity = kb.quantities.find(
@@ -306,23 +331,49 @@ export function FindPathPanel() {
 
                 {path.conditions.length > 0 && (
                   <div className="chips">
-                    {path.conditions.map((condition) => (
-                      <span
-                        key={condition.condition.id}
-                        className={`status-chip tone-${condition.status === 'confirmed' ? 'ok' : condition.status === 'violated' ? 'danger' : 'warning'}`}
-                      >
-                        {condition.condition.name.ru}
-                      </span>
-                    ))}
+                    {path.conditions.map((condition) => {
+                      const sources = condition.requiredBy
+                        .map((equationId) => kb.equations.find((equation) => equation.id === equationId)?.name.ru ?? equationId)
+                        .join(', ');
+                      return (
+                        <span
+                          key={condition.condition.id}
+                          className={`status-chip tone-${condition.status === 'confirmed' ? 'ok' : condition.status === 'violated' ? 'danger' : 'warning'}`}
+                          title={`Требуется уравнениями: ${sources}`}
+                        >
+                          {condition.condition.name.ru}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 
-                {path.warnings.length > 0 && (
+                {path.unverifiedConstraints.length > 0 && (
                   <ul className="path-warnings">
-                    {path.warnings.map((warning) => (
-                      <li key={warning}>{warning}</li>
+                    {path.unverifiedConstraints.map((constraint) => (
+                      <li key={constraint}>{constraint}</li>
                     ))}
                   </ul>
+                )}
+                {path.computation.messages.length > 0 && (
+                  <ul className="path-warnings">
+                    {path.computation.messages.map((message) => (
+                      <li key={message}>{message}</li>
+                    ))}
+                  </ul>
+                )}
+                {path.review.perEquation.length > 0 && (
+                  <details className="path-review">
+                    <summary>Формулировки и экспертиза по формулам</summary>
+                    <ul>
+                      {path.review.perEquation.map((item) => (
+                        <li key={item.equationId}>
+                          {kb.equations.find((equation) => equation.id === item.equationId)?.name.ru ?? item.equationId}:{' '}
+                          {FORMULATION_LABELS[item.formulation]}; экспертиза: {EXPERT_LABELS[item.expert]}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
                 )}
                 {path.notes.length > 0 && (
                   <ul className="path-notes">
