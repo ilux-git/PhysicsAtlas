@@ -1,0 +1,345 @@
+import { useMemo, useState } from 'react';
+import { useAtlas } from '../app/state.tsx';
+import type { PathResult } from '../engines/paths/find.ts';
+import { findPaths, pathHighlight } from '../engines/paths/find.ts';
+import { astToInfix } from '../engines/ast/parse.ts';
+import { Formula } from './Formula.tsx';
+import { formatNumber } from './labels.ts';
+
+const STATUS_LABELS = {
+  valid: 'допустимый',
+  conditional: 'условно допустимый',
+  invalid: 'недопустимый',
+} as const;
+
+interface KnownRow {
+  id: string;
+  value: string;
+  unitId: string;
+}
+
+const DEFAULT_KNOWN: KnownRow[] = [
+  { id: 'q.mass', value: '', unitId: 'unit.kilogram' },
+  { id: 'q.acceleration', value: '', unitId: 'unit.meter-per-second-squared' },
+  { id: 'q.displacement', value: '', unitId: 'unit.meter' },
+  { id: 'q.time', value: '', unitId: 'unit.second' },
+];
+
+type ConditionState = 'unconfirmed' | 'confirmed' | 'violated';
+
+export function FindPathPanel() {
+  const { kb, dispatch } = useAtlas();
+  const [targetId, setTargetId] = useState('q.power');
+  const [rows, setRows] = useState<KnownRow[]>(DEFAULT_KNOWN);
+  const [depthLimit, setDepthLimit] = useState(3);
+  const [conditionStates, setConditionStates] = useState<Record<string, ConditionState>>({});
+
+  const quantities = useMemo(
+    () => [...kb.quantities].sort((left, right) => left.name.ru.localeCompare(right.name.ru, 'ru')),
+    [kb.quantities],
+  );
+  const units = useMemo(() => new Map(kb.units.map((unit) => [unit.id, unit])), [kb.units]);
+  const symbols = useMemo(
+    () => new Map(kb.quantities.map((quantity) => [quantity.id, quantity.symbol])),
+    [kb.quantities],
+  );
+
+  const values = useMemo(() => {
+    const map = new Map<string, { value: number; unitId: string }>();
+    for (const row of rows) {
+      const parsed = Number(row.value.replace(',', '.'));
+      if (row.value.trim().length > 0 && Number.isFinite(parsed)) {
+        map.set(row.id, { value: parsed, unitId: row.unitId });
+      }
+    }
+    return map;
+  }, [rows]);
+
+  const result = useMemo(
+    () =>
+      findPaths(kb, {
+        targetId,
+        knownIds: rows.map((row) => row.id),
+        values,
+        confirmedConditionIds: Object.entries(conditionStates)
+          .filter(([, state]) => state === 'confirmed')
+          .map(([id]) => id),
+        violatedConditionIds: Object.entries(conditionStates)
+          .filter(([, state]) => state === 'violated')
+          .map(([id]) => id),
+        depthLimit,
+        maxPaths: 3,
+      }),
+    [kb, targetId, rows, values, conditionStates, depthLimit],
+  );
+
+  const usedConditions = useMemo(() => {
+    const map = new Map<string, PathResult['conditions'][number]>();
+    for (const path of result.paths) {
+      for (const condition of path.conditions) map.set(condition.condition.id, condition);
+    }
+    return [...map.values()].sort((left, right) =>
+      left.condition.name.ru.localeCompare(right.condition.name.ru, 'ru'),
+    );
+  }, [result.paths]);
+
+  const target = kb.quantities.find((quantity) => quantity.id === targetId);
+
+  const showOnMap = (path: PathResult): void => {
+    dispatch({ type: 'select', id: path.targetId });
+    dispatch({ type: 'highlight', highlight: pathHighlight(path) });
+  };
+
+  return (
+    <div className="tool">
+      <header className="tool-header">
+        <h2>Поиск вычислительного пути</h2>
+        <p>
+          Выберите известные величины и целевую величину. Атлас построит цепочку уравнений, проверит условия
+          применимости и покажет статус: допустимый, условно допустимый или недопустимый.
+        </p>
+      </header>
+
+      <section className="tool-section">
+        <h3>Целевая величина</h3>
+        <select
+          aria-label="Целевая величина"
+          value={targetId}
+          onChange={(event) => setTargetId(event.target.value)}
+        >
+          {quantities.map((quantity) => (
+            <option key={quantity.id} value={quantity.id}>
+              {quantity.name.ru} ({quantity.symbol})
+            </option>
+          ))}
+        </select>
+        <label className="inline-field">
+          Глубина поиска
+          <select
+            aria-label="Глубина поиска"
+            value={depthLimit}
+            onChange={(event) => setDepthLimit(Number(event.target.value))}
+          >
+            {[2, 3, 4].map((depth) => (
+              <option key={depth} value={depth}>
+                {depth}
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      <section className="tool-section">
+        <h3>Известные величины</h3>
+        <p className="section-hint">
+          Значения необязательны: без них строится символьная цепочка, с ними — численный расчёт в СИ.
+        </p>
+        <div className="known-rows">
+          {rows.map((row, index) => {
+            const quantity = kb.quantities.find((item) => item.id === row.id);
+            return (
+              <div className="known-row" key={`${row.id}-${index}`}>
+                <select
+                  aria-label={`Известная величина ${index + 1}`}
+                  value={row.id}
+                  onChange={(event) => {
+                    const nextId = event.target.value;
+                    const nextQuantity = kb.quantities.find((item) => item.id === nextId);
+                    setRows((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index
+                          ? {
+                              ...item,
+                              id: nextId,
+                              unitId: nextQuantity?.preferredUnitId ?? '',
+                            }
+                          : item,
+                      ),
+                    );
+                  }}
+                >
+                  {quantities.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name.ru} ({item.symbol})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  aria-label={`Значение ${index + 1}`}
+                  inputMode="decimal"
+                  placeholder="значение"
+                  value={row.value}
+                  onChange={(event) => {
+                    const nextValue = event.target.value;
+                    setRows((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, value: nextValue } : item,
+                      ),
+                    );
+                  }}
+                />
+                <select
+                  aria-label={`Единица ${index + 1}`}
+                  value={row.unitId}
+                  onChange={(event) => {
+                    const nextUnit = event.target.value;
+                    setRows((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, unitId: nextUnit } : item,
+                      ),
+                    );
+                  }}
+                >
+                  {(quantity?.unitIds ?? []).map((unitId) => {
+                    const unit = units.get(unitId);
+                    return (
+                      <option key={unitId} value={unitId}>
+                        {unit?.symbol ?? unitId}
+                      </option>
+                    );
+                  })}
+                </select>
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label={`Убрать величину ${index + 1}`}
+                  onClick={() => setRows((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <button
+          type="button"
+          className="text-button"
+          onClick={() => {
+            const existing = new Set(rows.map((row) => row.id));
+            const next = quantities.find((quantity) => !existing.has(quantity.id));
+            if (next) {
+              setRows((current) => [
+                ...current,
+                { id: next.id, value: '', unitId: next.preferredUnitId },
+              ]);
+            }
+          }}
+        >
+          + Добавить величину
+        </button>
+      </section>
+
+      {usedConditions.length > 0 && (
+        <section className="tool-section">
+          <h3>Условия применимости</h3>
+          <p className="section-hint">
+            Пока условие не подтверждено, цепочка остаётся условно допустимой. Отметка «нарушено» делает путь
+            недопустимым.
+          </p>
+          <div className="condition-statuses">
+            {usedConditions.map((entry) => (
+              <label key={entry.condition.id} className="condition-status-row">
+                <span>{entry.condition.name.ru}</span>
+                <select
+                  aria-label={`Статус условия «${entry.condition.name.ru}»`}
+                  value={conditionStates[entry.condition.id] ?? 'unconfirmed'}
+                  onChange={(event) => {
+                    const next = event.target.value as ConditionState;
+                    setConditionStates((current) => ({ ...current, [entry.condition.id]: next }));
+                  }}
+                >
+                  <option value="unconfirmed">не проверено</option>
+                  <option value="confirmed">подтверждено</option>
+                  <option value="violated">нарушено</option>
+                </select>
+              </label>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="tool-section">
+        <h3>
+          Результат
+          {target ? `: ${target.name.ru} (${target.symbol})` : ''}
+        </h3>
+        {result.paths.length === 0 ? (
+          <p className="empty-note">{result.reason}</p>
+        ) : (
+          <div className="path-list">
+            {result.paths.map((path, index) => (
+              <article key={path.id} className={`path-card status-${path.status}`}>
+                <header>
+                  <span className={`status-badge status-${path.status}`}>{STATUS_LABELS[path.status]}</span>
+                  <span className="path-rank">путь {index + 1}</span>
+                </header>
+                <ol className="path-steps">
+                  {path.steps.map((step, stepIndex) => {
+                    const targetQuantity = kb.quantities.find(
+                      (quantity) => quantity.id === step.targetId,
+                    );
+                    const unit = step.computed ? units.get(step.computed.unitId) : undefined;
+                    return (
+                      <li key={`${path.id}-${stepIndex}`}>
+                        <p className="step-equation">
+                          <Formula latex={step.equation.displayLatex} />
+                          <span className="step-equation-name">{step.equation.name.ru}</span>
+                        </p>
+                        <p className="step-expression">
+                          {targetQuantity?.symbol ?? step.targetId} ={' '}
+                          {astToInfix(step.ast, symbols)}
+                        </p>
+                        {step.computed && unit && (
+                          <p className="step-computed">
+                            ≈ {formatNumber(step.computed.value)} {unit.symbol}
+                          </p>
+                        )}
+                        {step.preconditions.length > 0 && (
+                          <p className="section-hint">
+                            Ограничения: {step.preconditions.map((item) => item.text).join(', ')}
+                          </p>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+
+                {path.conditions.length > 0 && (
+                  <div className="chips">
+                    {path.conditions.map((condition) => (
+                      <span
+                        key={condition.condition.id}
+                        className={`status-chip tone-${condition.status === 'confirmed' ? 'ok' : condition.status === 'violated' ? 'danger' : 'warning'}`}
+                      >
+                        {condition.condition.name.ru}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {path.warnings.length > 0 && (
+                  <ul className="path-warnings">
+                    {path.warnings.map((warning) => (
+                      <li key={warning}>{warning}</li>
+                    ))}
+                  </ul>
+                )}
+                {path.notes.length > 0 && (
+                  <ul className="path-notes">
+                    {path.notes.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                )}
+
+                <button type="button" className="text-button" onClick={() => showOnMap(path)}>
+                  Показать на карте
+                </button>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}

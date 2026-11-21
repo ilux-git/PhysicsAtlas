@@ -88,4 +88,77 @@ describe('atlas application', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Второй закон Ньютона' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '10–11' })).toHaveAttribute('aria-pressed', 'true');
   });
+
+  it('finds the mechanics chain and marks it conditionally valid', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+
+    expect(screen.getAllByText('условно допустимый').length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { level: 3, name: 'Условия применимости' })).toBeInTheDocument();
+    expect(document.querySelectorAll('.path-card').length).toBeGreaterThan(0);
+    const statuses = screen.getAllByLabelText(/Статус условия/);
+    expect(statuses.length).toBeGreaterThan(0);
+  });
+
+  it('turns the path valid when every condition is confirmed', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+    const conditionSelects = screen.getAllByLabelText(/Статус условия/);
+    for (const select of conditionSelects) {
+      await user.selectOptions(select, 'confirmed');
+    }
+    expect(screen.getAllByText('допустимый').length).toBeGreaterThan(0);
+    expect(screen.queryAllByText('условно допустимый')).toHaveLength(0);
+  });
+
+  it('computes numeric results for the chain with units', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+    await user.type(screen.getByLabelText('Значение 1'), '2');
+    await user.type(screen.getByLabelText('Значение 2'), '3');
+    await user.type(screen.getByLabelText('Значение 3'), '4');
+    await user.type(screen.getByLabelText('Значение 4'), '2');
+    expect(screen.getAllByText(/≈ 12 W/).length).toBeGreaterThan(0);
+  });
+
+  it('marks the path invalid when a condition is violated', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+    const inertial = screen.getByLabelText(/Статус условия «Инерциальная система отсчёта»/);
+    await user.selectOptions(inertial, 'violated');
+    expect(screen.getAllByText('недопустимый').length).toBeGreaterThan(0);
+  });
+
+  it('converts units and rejects incompatible ones', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Конвертер' }));
+    expect(screen.getByText(/1\s*000\s*m/)).toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText('Целевая единица'), 'unit.newton');
+    expect(screen.getByText('размерности не совпадают')).toBeInTheDocument();
+  });
+
+  it('shows the formula explorer for the selected equation', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '#node=eq.newton2.magnitudes');
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Формулы' }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Второй закон Ньютона (модули)' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Переменные' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Связанные законы' })).toBeInTheDocument();
+  });
+
+  it('shows derivation steps and the structural check', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '#node=der.newton2.acceleration');
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Вывод' }));
+    expect(screen.getByText(/Разделим обе части уравнения на массу m/)).toBeInTheDocument();
+    expect(screen.getByText(/Проверка пройдена/)).toBeInTheDocument();
+  });
 });

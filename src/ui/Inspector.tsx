@@ -4,7 +4,6 @@ import { collectQuantityIds } from '../domain/ast.ts';
 import {
   BASE_DIMENSIONS,
   LEVEL_LABELS,
-  type AstNode,
   type Condition,
   type Dimension,
   type Equation,
@@ -16,6 +15,8 @@ import {
 } from '../domain/types.ts';
 import { formatDimension } from '../engines/dimensions.ts';
 import { equationStatuses, verifyDerivation } from '../engines/equation.ts';
+import { AstTree } from './AstView.tsx';
+import { EntityChip } from './EntityChip.tsx';
 import { Formula } from './Formula.tsx';
 import { ENTITY_KIND_LABELS, REVIEW_LABELS, entityShortLabel, formatNumber } from './labels.ts';
 import { equationStatusChips, StatusChips, type ChipItem } from './StatusChips.tsx';
@@ -38,27 +39,7 @@ function Section({
   );
 }
 
-function EntityChip({ id, note }: { id: string; note?: string }) {
-  const { kb, dispatch } = useAtlas();
-  const entity = kb.entities.get(id);
-  if (!entity) {
-    return <code className="missing-entity">{id}</code>;
-  }
-  return (
-    <button
-      type="button"
-      className={`entity-chip chip-${entity.kind}`}
-      onClick={() => dispatch({ type: 'select', id })}
-      title={`${ENTITY_KIND_LABELS[entity.kind]}: ${entity.name.ru}`}
-    >
-      <span className={`kind-dot kind-${entity.kind}`} aria-hidden="true" />
-      {note ?? entity.name.ru}
-      {(entity.kind === 'quantity' || entity.kind === 'unit') && (
-        <span className="chip-symbol">{entity.symbol}</span>
-      )}
-    </button>
-  );
-}
+
 
 function LevelText({ entity }: { entity: Entity }) {
   const { state } = useAtlas();
@@ -123,45 +104,7 @@ function statusChipsForReview(entity: Entity): ChipItem[] {
   ];
 }
 
-function AstLines({
-  node,
-  symbolOf,
-  depth = 0,
-}: {
-  node: AstNode;
-  symbolOf: (id: string) => string;
-  depth?: number;
-}): string[] {
-  const indent = '  '.repeat(depth);
-  switch (node.type) {
-    case 'variable':
-      return [`${indent}variable(${symbolOf(node.quantityId)})`];
-    case 'constant':
-      return [`${indent}constant(${formatNumber(node.value)})`];
-    case 'negate':
-      return [`${indent}negate`, ...AstLines({ node: node.arg, symbolOf, depth: depth + 1 })];
-    case 'sqrt':
-      return [`${indent}sqrt`, ...AstLines({ node: node.arg, symbolOf, depth: depth + 1 })];
-    case 'power':
-      return [
-        `${indent}power(^${node.exponent})`,
-        ...AstLines({ node: node.base, symbolOf, depth: depth + 1 }),
-      ];
-    case 'add':
-    case 'subtract':
-    case 'multiply':
-    case 'divide':
-      return [
-        `${indent}${node.type}`,
-        ...AstLines({ node: node.left, symbolOf, depth: depth + 1 }),
-        ...AstLines({ node: node.right, symbolOf, depth: depth + 1 }),
-      ];
-  }
-}
 
-function AstTree({ node, symbolOf }: { node: AstNode; symbolOf: (id: string) => string }) {
-  return <pre className="ast-tree">{AstLines({ node, symbolOf }).join('\n')}</pre>;
-}
 
 function QuantityBody({ quantity }: { quantity: Quantity }) {
   const { kb, graph, state, dispatch } = useAtlas();
