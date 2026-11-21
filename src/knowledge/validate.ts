@@ -20,11 +20,9 @@ const KIND_PREFIX: Record<EntityKind, string> = {
   derivation: 'der.',
 };
 
-export function normalizeLatex(text: string): string {
-  return text
-    .replace(/\\[a-zA-Z]+/g, ' ')
-    .replace(/[{}\s()[\]]/g, '');
-}
+import { normalizeLatex } from '../domain/text.ts';
+
+export { normalizeLatex };
 
 export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
