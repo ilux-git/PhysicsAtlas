@@ -1,0 +1,224 @@
+[
+  {
+    "id": "eq.newton2.magnitudes",
+    "kind": "equation",
+    "slug": "newton-second-magnitudes",
+    "name": { "ru": "Второй закон Ньютона (модули)", "en": "Newton's second law (magnitudes)" },
+    "aliases": [{ "ru": "F = ma" }],
+    "description": {
+      "ru": "Скалярная запись второго закона Ньютона через модули силы, массы и ускорения; направление ускорения совпадает с направлением равнодействующей силы."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.force" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.mass" },
+      "right": { "type": "variable", "quantityId": "q.acceleration" }
+    },
+    "displayLatex": "F = m a",
+    "alternativeForms": [],
+    "lawRefs": ["law.newton.second"],
+    "conditionRefs": ["cond.inertial-frame", "cond.constant-mass"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули; направление ускорения совпадает с направлением равнодействующей силы." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.newton2.acceleration",
+    "kind": "equation",
+    "slug": "newton-second-acceleration",
+    "name": { "ru": "Ускорение из второго закона Ньютона", "en": "Acceleration from Newton's second law" },
+    "aliases": [{ "ru": "a = F/m" }],
+    "description": {
+      "ru": "Выражение ускорения через равнодействующую силу и массу; алгебраическое следствие записи F = ma при ненулевой массе."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.acceleration" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.force" },
+      "right": { "type": "variable", "quantityId": "q.mass" }
+    },
+    "displayLatex": "a = \\frac{F}{m}",
+    "alternativeForms": [],
+    "lawRefs": ["law.newton.second"],
+    "conditionRefs": ["cond.inertial-frame", "cond.constant-mass", "cond.nonzero-mass"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули; при нулевой массе выражение не определено." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.work.constant-force",
+    "kind": "equation",
+    "slug": "work-constant-force",
+    "name": { "ru": "Работа постоянной силы вдоль перемещения", "en": "Work of a constant force along displacement" },
+    "aliases": [{ "ru": "A = Fs" }],
+    "description": {
+      "ru": "Работа постоянной силы, направленной вдоль перемещения. Это частный случай общего определения работы."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.work" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.force" },
+      "right": { "type": "variable", "quantityId": "q.displacement" }
+    },
+    "displayLatex": "A = F s",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.constant-force", "cond.force-along-displacement"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Сила постоянна и направлена вдоль перемещения; угол между силой и перемещением равен нулю." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.work.force",
+    "kind": "equation",
+    "slug": "work-force",
+    "name": { "ru": "Сила из работы", "en": "Force from work" },
+    "aliases": [{ "ru": "F = A/s" }],
+    "description": {
+      "ru": "Выражение постоянной силы через работу и перемещение; допустимо при ненулевом перемещении."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.force" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.displacement" }
+    },
+    "displayLatex": "F = \\frac{A}{s}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.constant-force", "cond.force-along-displacement", "cond.nonzero-displacement"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевом перемещении работа равна нулю, и сила из работы не определяется." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.average",
+    "kind": "equation",
+    "slug": "power-average",
+    "name": { "ru": "Средняя мощность за интервал", "en": "Average power over an interval" },
+    "aliases": [{ "ru": "P = A/t" }],
+    "description": {
+      "ru": "Средняя мощность равна отношению работы к интервалу времени. Для мгновенной мощности нужен предельный переход."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.power" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "P = \\frac{A}{t}",
+    "alternativeForms": [
+      {
+        "id": "eq.power.average.form.work",
+        "note": { "ru": "Произведение средней мощности на интервал времени; алгебраическая форма того же уравнения." },
+        "lhsAst": { "type": "variable", "quantityId": "q.work" },
+        "rhsAst": {
+          "type": "multiply",
+          "left": { "type": "variable", "quantityId": "q.power" },
+          "right": { "type": "variable", "quantityId": "q.time" }
+        },
+        "displayLatex": "A = P t"
+      }
+    ],
+    "lawRefs": [],
+    "conditionRefs": ["cond.nonzero-time"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Величина средняя за интервал; интервал времени должен быть ненулевым." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.time",
+    "kind": "equation",
+    "slug": "power-time",
+    "name": { "ru": "Время из работы и мощности", "en": "Time from work and power" },
+    "aliases": [{ "ru": "t = A/P" }],
+    "description": {
+      "ru": "Выражение интервала времени через работу и среднюю мощность; требует ненулевой мощности."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.time" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.power" }
+    },
+    "displayLatex": "t = \\frac{A}{P}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.nonzero-power"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевой мощности время из работы не определяется." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.velocity.uniform",
+    "kind": "equation",
+    "slug": "uniform-velocity",
+    "name": { "ru": "Скорость при равномерном движении", "en": "Velocity of uniform motion" },
+    "aliases": [{ "ru": "v = s/t" }],
+    "description": {
+      "ru": "Модуль скорости при равномерном прямолинейном движении равен отношению модуля перемещения к интервалу времени."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.velocity" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.displacement" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "v = \\frac{s}{t}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.uniform-motion", "cond.nonzero-time"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули для равномерного движения; при неравномерном движении это средняя скорость." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  }
+]

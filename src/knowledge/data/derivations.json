@@ -1,0 +1,108 @@
+[
+  {
+    "id": "der.newton2.acceleration",
+    "kind": "derivation",
+    "slug": "acceleration-from-newton-second",
+    "name": { "ru": "Вывод a = F/m из F = ma", "en": "Derive a = F/m from F = ma" },
+    "aliases": [],
+    "description": {
+      "ru": "Алгебраическое преобразование второго закона Ньютона: обе части делятся на массу при m ≠ 0."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "sourceEquationId": "eq.newton2.magnitudes",
+    "targetEquationId": "eq.newton2.acceleration",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Разделим обе части уравнения на массу m (m ≠ 0).",
+        "operation": "divide-both-sides",
+        "displayFrom": "F = m a",
+        "displayTo": "F/m = a",
+        "precondition": "m ≠ 0"
+      },
+      {
+        "order": 2,
+        "description": "Перепишем равенство, поменяв стороны местами.",
+        "operation": "rewrite",
+        "displayFrom": "F/m = a",
+        "displayTo": "a = F/m"
+      }
+    ],
+    "preconditions": ["cond.nonzero-mass"],
+    "verificationStatus": "structural"
+  },
+  {
+    "id": "der.work.force",
+    "kind": "derivation",
+    "slug": "force-from-work",
+    "name": { "ru": "Вывод F = A/s из A = Fs", "en": "Derive F = A/s from A = Fs" },
+    "aliases": [],
+    "description": {
+      "ru": "Алгебраическое преобразование формулы работы постоянной силы при ненулевом перемещении."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "status": "standard-form" },
+    "sourceEquationId": "eq.work.constant-force",
+    "targetEquationId": "eq.work.force",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Разделим обе части на перемещение s (s ≠ 0).",
+        "operation": "divide-both-sides",
+        "displayFrom": "A = F s",
+        "displayTo": "A/s = F",
+        "precondition": "s ≠ 0"
+      },
+      {
+        "order": 2,
+        "description": "Перепишем равенство, поменяв стороны местами.",
+        "operation": "rewrite",
+        "displayFrom": "A/s = F",
+        "displayTo": "F = A/s"
+      }
+    ],
+    "preconditions": ["cond.nonzero-displacement"],
+    "verificationStatus": "structural"
+  },
+  {
+    "id": "der.power.time",
+    "kind": "derivation",
+    "slug": "time-from-power",
+    "name": { "ru": "Вывод t = A/P из P = A/t", "en": "Derive t = A/P from P = A/t" },
+    "aliases": [],
+    "description": {
+      "ru": "Алгебраическое преобразование формулы средней мощности при ненулевых времени и мощности."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "sourceEquationId": "eq.power.average",
+    "targetEquationId": "eq.power.time",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Умножим обе части на интервал времени t (t ≠ 0).",
+        "operation": "multiply-both-sides",
+        "displayFrom": "P = A/t",
+        "displayTo": "P t = A",
+        "precondition": "t ≠ 0"
+      },
+      {
+        "order": 2,
+        "description": "Разделим обе части на мощность P (P ≠ 0).",
+        "operation": "divide-both-sides",
+        "displayFrom": "P t = A",
+        "displayTo": "t = A/P",
+        "precondition": "P ≠ 0"
+      }
+    ],
+    "preconditions": ["cond.nonzero-time", "cond.nonzero-power"],
+    "verificationStatus": "structural"
+  }
+]

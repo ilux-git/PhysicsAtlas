@@ -1,0 +1,178 @@
+[
+  {
+    "id": "q.mass",
+    "kind": "quantity",
+    "slug": "mass",
+    "name": { "ru": "Масса", "en": "Mass" },
+    "aliases": [{ "ru": "масса тела" }],
+    "description": { "ru": "Скалярная мера инертности тела в классической механике." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Масса показывает, насколько трудно разогнать тело или остановить его." } },
+      "9": { "summary": { "ru": "Масса — мера инертности тела. Обозначается m, измеряется в килограммах." } },
+      "10-11": { "summary": { "ru": "Масса входит во второй закон Ньютона как мера инертности; при постоянной массе F = ma." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "m",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.mass",
+    "unitIds": ["unit.kilogram", "unit.gram"],
+    "preferredUnitId": "unit.kilogram",
+    "definition": { "ru": "Масса — физическая величина, характеризующая инертность тела." }
+  },
+  {
+    "id": "q.time",
+    "kind": "quantity",
+    "slug": "time",
+    "name": { "ru": "Время", "en": "Time" },
+    "aliases": [{ "ru": "интервал времени" }],
+    "description": { "ru": "Длительность процесса или интервала между событиями." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Время показывает, как долго длится процесс." } },
+      "9": { "summary": { "ru": "Время — длительность процесса; обозначается t и измеряется в секундах." } },
+      "10-11": { "summary": { "ru": "В классической механике интервал времени считается абсолютным; обозначается t." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "t",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.time",
+    "unitIds": ["unit.second", "unit.minute", "unit.hour"],
+    "preferredUnitId": "unit.second",
+    "definition": { "ru": "Интервал времени — длительность между двумя событиями." }
+  },
+  {
+    "id": "q.displacement",
+    "kind": "quantity",
+    "slug": "displacement",
+    "name": { "ru": "Перемещение", "en": "Displacement" },
+    "aliases": [],
+    "description": { "ru": "Вектор, соединяющий начальное и конечное положение тела." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Перемещение — вектор из начального положения тела в конечное." } },
+      "9": { "summary": { "ru": "Модуль перемещения равен кратчайшему расстоянию между начальной и конечной точками." } },
+      "10-11": { "summary": { "ru": "Перемещение — вектор; при прямолинейном движении без смены направления его модуль совпадает с путём." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "s",
+    "quantityKind": "vector",
+    "dimensionId": "dim.length",
+    "unitIds": ["unit.meter", "unit.kilometer", "unit.centimeter"],
+    "preferredUnitId": "unit.meter",
+    "definition": { "ru": "Перемещение — вектор изменения положения тела за рассматриваемый интервал." }
+  },
+  {
+    "id": "q.velocity",
+    "kind": "quantity",
+    "slug": "velocity",
+    "name": { "ru": "Скорость", "en": "Velocity" },
+    "aliases": [{ "ru": "средняя скорость" }],
+    "description": { "ru": "Векторная величина, равная отношению перемещения к интервалу времени." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Скорость показывает, насколько быстро тело меняет положение." } },
+      "9": { "summary": { "ru": "Скорость — векторная величина; при равномерном движении v = s/t." } },
+      "10-11": { "summary": { "ru": "Скорость — вектор; мгновенная скорость равна производной перемещения по времени." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "v",
+    "quantityKind": "vector",
+    "dimensionId": "dim.velocity",
+    "unitIds": ["unit.meter-per-second", "unit.kilometer-per-hour"],
+    "preferredUnitId": "unit.meter-per-second",
+    "definition": { "ru": "Скорость — векторная величина, характеризующая быстроту изменения положения тела." }
+  },
+  {
+    "id": "q.acceleration",
+    "kind": "quantity",
+    "slug": "acceleration",
+    "name": { "ru": "Ускорение", "en": "Acceleration" },
+    "aliases": [],
+    "description": { "ru": "Векторная величина, характеризующая быстроту изменения скорости." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Ускорение показывает, как быстро меняется скорость." } },
+      "9": { "summary": { "ru": "Ускорение — векторная величина; обозначается a, измеряется в м/с²." } },
+      "10-11": { "summary": { "ru": "Ускорение — вторая производная перемещения по времени; входит во второй закон Ньютона." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "a",
+    "quantityKind": "vector",
+    "dimensionId": "dim.acceleration",
+    "unitIds": ["unit.meter-per-second-squared"],
+    "preferredUnitId": "unit.meter-per-second-squared",
+    "definition": { "ru": "Ускорение — векторная величина, равная быстроте изменения скорости." }
+  },
+  {
+    "id": "q.force",
+    "kind": "quantity",
+    "slug": "force",
+    "name": { "ru": "Сила", "en": "Force" },
+    "aliases": [{ "ru": "равнодействующая сила" }],
+    "description": { "ru": "Векторная мера механического действия одного тела на другое." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Сила — действие одного тела на другое, которое меняет движение или форму тела." } },
+      "9": { "summary": { "ru": "Сила — векторная величина; обозначается F, измеряется в ньютонах." } },
+      "10-11": { "summary": { "ru": "В инерциальной системе отсчёта равнодействующая сила определяет ускорение: F = ma." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "F",
+    "quantityKind": "vector",
+    "dimensionId": "dim.force",
+    "unitIds": ["unit.newton"],
+    "preferredUnitId": "unit.newton",
+    "definition": { "ru": "Сила — векторная величина, мера механического действия на тело." }
+  },
+  {
+    "id": "q.work",
+    "kind": "quantity",
+    "slug": "work",
+    "name": { "ru": "Работа", "en": "Work" },
+    "aliases": [{ "ru": "механическая работа" }],
+    "description": { "ru": "Скалярная величина, характеризующая действие силы по перемещению тела." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Работа показывает, какое действие сила оказала при перемещении тела." } },
+      "9": { "summary": { "ru": "При постоянной силе вдоль перемещения работа равна A = Fs." } },
+      "10-11": { "summary": { "ru": "В общем случае работа — интеграл силы по перемещению; школьная запись A = Fs относится к постоянной силе вдоль перемещения." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "A",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.energy",
+    "unitIds": ["unit.joule", "unit.kilojoule"],
+    "preferredUnitId": "unit.joule",
+    "definition": { "ru": "Работа — скалярная величина, характеризующая действие силы при перемещении тела." }
+  },
+  {
+    "id": "q.power",
+    "kind": "quantity",
+    "slug": "power",
+    "name": { "ru": "Мощность", "en": "Power" },
+    "aliases": [],
+    "description": { "ru": "Скалярная величина, характеризующая быстроту совершения работы." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Мощность показывает, как быстро совершается работа." } },
+      "9": { "summary": { "ru": "Мощность — скалярная величина, равная отношению работы к интервалу времени: P = A/t." } },
+      "10-11": { "summary": { "ru": "Средняя мощность за интервал равна A/t; мгновенная мощность — производная работы по времени." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "P",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.power",
+    "unitIds": ["unit.watt", "unit.kilowatt"],
+    "preferredUnitId": "unit.watt",
+    "definition": { "ru": "Мощность — скалярная величина, характеризующая быстроту совершения работы." }
+  }
+]

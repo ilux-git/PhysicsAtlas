@@ -1,0 +1,31 @@
+[
+  {
+    "id": "source.si-brochure-2019",
+    "type": "standard",
+    "title": "SI Brochure: The International System of Units (SI), 9th edition",
+    "authors": "Bureau International des Poids et Mesures (BIPM)",
+    "edition": "9-е издание, 2019",
+    "url": "https://www.bipm.org/en/publications/si-brochure",
+    "note": {
+      "ru": "Источник определений единиц и размерностей СИ."
+    }
+  },
+  {
+    "id": "source.peryshkin-7-9",
+    "type": "textbook",
+    "title": "Физика. 7–9 классы",
+    "authors": "А. В. Перышкин",
+    "note": {
+      "ru": "Школьные учебники. Конкретные издания и страницы требуют сверки; источник указывает охват материала, а не подтверждает физическую корректность формулировок атласа."
+    }
+  },
+  {
+    "id": "source.myakishev-10-11",
+    "type": "textbook",
+    "title": "Физика. 10–11 классы",
+    "authors": "Г. Я. Мякишев, Б. Б. Буховцев, Н. Н. Сотский",
+    "note": {
+      "ru": "Школьные учебники старшей школы. Конкретные издания и страницы требуют сверки; источник указывает охват материала, а не подтверждает физическую корректность формулировок атласа."
+    }
+  }
+]
