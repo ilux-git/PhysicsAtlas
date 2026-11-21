@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useAtlas } from '../app/state.tsx';
+import { useMemo } from 'react';
+import { useAtlas, type PathConditionDecision, type PathDraft } from '../app/state.tsx';
 import type { PathResult } from '../engines/paths/find.ts';
 import { findPaths, pathHighlight } from '../engines/paths/find.ts';
 import { astToInfix } from '../engines/ast/parse.ts';
@@ -26,27 +26,31 @@ const CONDITION_STATUS_LABELS = {
   violated: 'нарушено',
 } as const;
 
-interface KnownRow {
-  id: string;
-  value: string;
-  unitId: string;
-}
-
-const DEFAULT_KNOWN: KnownRow[] = [
-  { id: 'q.mass', value: '', unitId: 'unit.kilogram' },
-  { id: 'q.acceleration', value: '', unitId: 'unit.meter-per-second-squared' },
-  { id: 'q.displacement', value: '', unitId: 'unit.meter' },
-  { id: 'q.time', value: '', unitId: 'unit.second' },
-];
-
-type ConditionState = 'unconfirmed' | 'confirmed' | 'violated';
-
 export function FindPathPanel() {
-  const { kb, dispatch } = useAtlas();
-  const [targetId, setTargetId] = useState('q.power');
-  const [rows, setRows] = useState<KnownRow[]>(DEFAULT_KNOWN);
-  const [depthLimit, setDepthLimit] = useState(3);
-  const [conditionStates, setConditionStates] = useState<Record<string, ConditionState>>({});
+  const { kb, state, dispatch } = useAtlas();
+  const draft = state.pathDraft;
+  const { targetId, rows, depthLimit, conditionStates } = draft;
+  const updateDraft = (patch: Partial<PathDraft>): void => {
+    dispatch({ type: 'path-draft', draft: { ...draft, ...patch } });
+  };
+  const setRows = (
+    next:
+      | PathDraft['rows']
+      | ((current: PathDraft['rows']) => PathDraft['rows']),
+  ): void => {
+    updateDraft({ rows: typeof next === 'function' ? next(rows) : next });
+  };
+  const setConditionStates = (
+    next:
+      | Record<string, PathConditionDecision>
+      | ((current: Record<string, PathConditionDecision>) => Record<string, PathConditionDecision>),
+  ): void => {
+    updateDraft({
+      conditionStates: typeof next === 'function' ? next(conditionStates) : next,
+    });
+  };
+  const setTargetId = (next: string): void => updateDraft({ targetId: next });
+  const setDepthLimit = (next: number): void => updateDraft({ depthLimit: next });
 
   const quantities = useMemo(
     () => [...kb.quantities].sort((left, right) => left.name.ru.localeCompare(right.name.ru, 'ru')),
@@ -259,7 +263,7 @@ export function FindPathPanel() {
                   aria-label={`Статус условия «${entry.condition.name.ru}»`}
                   value={conditionStates[entry.condition.id] ?? 'unconfirmed'}
                   onChange={(event) => {
-                    const next = event.target.value as ConditionState;
+                    const next = event.target.value as PathConditionDecision;
                     setConditionStates((current) => ({ ...current, [entry.condition.id]: next }));
                   }}
                 >

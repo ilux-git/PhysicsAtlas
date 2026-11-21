@@ -32,6 +32,33 @@ export interface Filters {
   edgeKinds: EdgeKind[];
 }
 
+export type PathConditionDecision = 'unconfirmed' | 'confirmed' | 'violated';
+
+export interface PathDraftLine {
+  id: string;
+  value: string;
+  unitId: string;
+}
+
+export interface PathDraft {
+  targetId: string;
+  rows: PathDraftLine[];
+  depthLimit: number;
+  conditionStates: Record<string, PathConditionDecision>;
+}
+
+export const DEFAULT_PATH_DRAFT: PathDraft = {
+  targetId: 'q.power',
+  rows: [
+    { id: 'q.mass', value: '', unitId: 'unit.kilogram' },
+    { id: 'q.acceleration', value: '', unitId: 'unit.meter-per-second-squared' },
+    { id: 'q.displacement', value: '', unitId: 'unit.meter' },
+    { id: 'q.time', value: '', unitId: 'unit.second' },
+  ],
+  depthLimit: 3,
+  conditionStates: {},
+};
+
 export interface Highlight {
   nodes: string[];
   edges: string[];
@@ -46,6 +73,8 @@ export interface AppState {
   tab: Tab;
   query: string;
   highlight: Highlight | null;
+  history: string[];
+  pathDraft: PathDraft;
 }
 
 export const ALL_ENTITY_KINDS: readonly EntityKind[] = [
@@ -83,10 +112,14 @@ export const DEFAULT_STATE: AppState = {
   tab: 'card',
   query: '',
   highlight: null,
+  history: [],
+  pathDraft: { ...DEFAULT_PATH_DRAFT, rows: DEFAULT_PATH_DRAFT.rows.map((row) => ({ ...row })) },
 };
 
 export type Action =
   | { type: 'select'; id: string }
+  | { type: 'back' }
+  | { type: 'path-draft'; draft: PathDraft }
   | { type: 'level'; level: LevelKey }
   | { type: 'domain'; domain: string }
   | { type: 'radius'; radius: number }
@@ -100,7 +133,25 @@ export type Action =
 export function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case 'select':
-      return { ...state, selectedId: action.id, highlight: null };
+      if (action.id === state.selectedId) return { ...state, highlight: null };
+      return {
+        ...state,
+        selectedId: action.id,
+        highlight: null,
+        history: [...state.history, state.selectedId].slice(-20),
+      };
+    case 'back': {
+      const previous = state.history[state.history.length - 1];
+      if (!previous) return state;
+      return {
+        ...state,
+        selectedId: previous,
+        history: state.history.slice(0, -1),
+        highlight: null,
+      };
+    }
+    case 'path-draft':
+      return { ...state, pathDraft: action.draft };
     case 'level':
       return { ...state, level: action.level };
     case 'domain':

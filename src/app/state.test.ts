@@ -30,7 +30,36 @@ describe('application state', () => {
     expect(next.highlight).toBeNull();
   });
 
-  it('clamps the neighbourhood radius', () => {
+  it('keeps a bounded selection history and goes back', () => {
+    const first = appReducer(DEFAULT_STATE, { type: 'select', id: 'q.mass' });
+    const second = appReducer(first, { type: 'select', id: 'q.time' });
+    expect(second.history).toEqual(['q.force', 'q.mass']);
+    const back = appReducer(second, { type: 'back' });
+    expect(back.selectedId).toBe('q.mass');
+    expect(back.history).toEqual(['q.force']);
+    expect(appReducer(DEFAULT_STATE, { type: 'back' })).toBe(DEFAULT_STATE);
+  });
+
+it('does not repeat the current selection in history', () => {
+    const state = appReducer(DEFAULT_STATE, { type: 'select', id: 'q.mass' });
+    const repeated = appReducer(state, { type: 'select', id: 'q.mass' });
+    expect(repeated.history).toEqual(['q.force']);
+  });
+
+it('keeps the path draft in application state', () => {
+    const draft = {
+      ...DEFAULT_STATE.pathDraft,
+      targetId: 'q.current',
+      depthLimit: 4,
+      conditionStates: { 'cond.inertial-frame': 'confirmed' as const },
+    };
+    const state = appReducer(DEFAULT_STATE, { type: 'path-draft', draft });
+    expect(state.pathDraft.targetId).toBe('q.current');
+    expect(state.pathDraft.depthLimit).toBe(4);
+    expect(state.pathDraft.conditionStates['cond.inertial-frame']).toBe('confirmed');
+  });
+
+it('clamps the neighbourhood radius', () => {
     expect(appReducer(DEFAULT_STATE, { type: 'radius', radius: 9 }).radius).toBe(4);
     expect(appReducer(DEFAULT_STATE, { type: 'radius', radius: 0 }).radius).toBe(1);
   });

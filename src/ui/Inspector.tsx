@@ -1,5 +1,6 @@
 import { useMemo, type ReactNode } from 'react';
 import { useAtlas } from '../app/state.tsx';
+import { EDGE_REGISTRY } from '../domain/edges.ts';
 import { collectQuantityIds } from '../domain/ast.ts';
 import {
   BASE_DIMENSIONS,
@@ -8,6 +9,7 @@ import {
   type Dimension,
   type Equation,
   type Derivation,
+  type EdgeKind,
   type Entity,
   type Law,
   type Quantity,
@@ -19,6 +21,7 @@ import { AstTree } from './AstView.tsx';
 import { EntityChip } from './EntityChip.tsx';
 import { Formula } from './Formula.tsx';
 import {
+  EDGE_KIND_LABELS,
   ENTITY_KIND_LABELS,
   EXPERT_LABELS,
   FORMULATION_LABELS,
@@ -566,6 +569,39 @@ function DerivationBody({ derivation }: { derivation: Derivation }) {
   );
 }
 
+function RelationsSection({ entity }: { entity: Entity }) {
+  const { graph } = useAtlas();
+  const groups = new Map<EdgeKind, Set<string>>();
+  const add = (kind: EdgeKind, id: string): void => {
+    const ids = groups.get(kind) ?? new Set<string>();
+    ids.add(id);
+    groups.set(kind, ids);
+  };
+  for (const edge of graph.outgoing.get(entity.id) ?? []) add(edge.kind, edge.to);
+  for (const edge of graph.incoming.get(entity.id) ?? []) add(edge.kind, edge.from);
+  if (groups.size === 0) return null;
+
+  return (
+    <Section title="Связи" hint="Стрелка в модели идёт от источника к цели; направление указано рядом с типом.">
+      <div className="relation-groups">
+        {[...groups.entries()].map(([kind, ids]) => (
+          <div className="relation-group" key={kind}>
+            <h4>
+              {EDGE_KIND_LABELS[kind]}
+              <span className="relation-direction">{EDGE_REGISTRY[kind].direction}</span>
+            </h4>
+            <div className="chips">
+              {[...ids].map((id) => (
+                <EntityChip key={`${kind}-${id}`} id={id} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 function InspectorBody({ entity }: { entity: Entity }) {
   switch (entity.kind) {
     case 'quantity':
@@ -618,6 +654,8 @@ export function Inspector() {
 
       <div className="inspector-body">
         <InspectorBody entity={entity} />
+
+        <RelationsSection entity={entity} />
 
         <Section title="Источники">
           {sources.length === 0 ? (

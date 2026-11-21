@@ -863,6 +863,32 @@ code {
   color: var(--ink-faint);
 }
 
+.relation-groups {
+  display: grid;
+  gap: 10px;
+}
+
+.relation-group h4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0 0 5px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.relation-direction {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+
+.back-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .chip-kind {
   font-size: 9px;
   letter-spacing: 0.06em;

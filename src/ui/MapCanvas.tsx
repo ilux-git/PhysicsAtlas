@@ -3,6 +3,7 @@ import { isEntityVisible, useAtlas } from '../app/state.tsx';
 import type { Entity, EntityKind } from '../domain/types.ts';
 import { formatDimension } from '../engines/dimensions.ts';
 import { layoutNeighborhood } from '../engines/graph/layout.ts';
+import { EDGE_REGISTRY } from '../domain/edges.ts';
 import {
   EDGE_KIND_GROUP,
   EDGE_KIND_LABELS,
@@ -209,7 +210,9 @@ export function MapCanvas() {
     <div className="map">
       <div className="map-header">
         <div>
-          <span className="map-eyebrow">Локальная область</span>
+          <span className="map-eyebrow">
+            Локальная область · глубина {state.radius}
+          </span>
           <strong>
             {kb.entities.get(state.selectedId)?.name.ru ?? state.selectedId}
           </strong>
@@ -358,7 +361,9 @@ export function MapCanvas() {
                   strokeDasharray={EDGE_DASH[group]}
                   markerEnd={`url(#arrow-${group})`}
                 />
-                <title>{`${EDGE_KIND_LABELS[edge.kind]}: ${fromEntity.name.ru} → ${toEntity.name.ru}`}</title>
+                <title>
+                  {`${EDGE_KIND_LABELS[edge.kind]}: ${fromEntity.name.ru} → ${toEntity.name.ru} (${EDGE_REGISTRY[edge.kind].direction})`}
+                </title>
               </g>
             );
           })}
@@ -400,7 +405,7 @@ export function MapCanvas() {
                 <title>
                   {`${ENTITY_KIND_LABELS[entity.kind]}: ${entity.name.ru}${
                     entity.kind === 'quantity' ? ` (${entity.symbol})` : ''
-                  }${entity.kind === 'dimension' ? ` — ${formatDimension(entity.exponents)}` : ''}`}
+                  }${entity.kind === 'dimension' ? ` — ${formatDimension(entity.exponents)}` : ''}. Шагов от фокуса: ${node.hop}.`}
                 </title>
               </g>
             );

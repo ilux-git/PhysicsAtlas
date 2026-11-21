@@ -23,6 +23,14 @@ export function Workspace() {
         </div>
         <SearchBox />
         <div className="header-controls">
+          <button
+            type="button"
+            className="text-button back-button"
+            disabled={state.history.length === 0}
+            onClick={() => dispatch({ type: 'back' })}
+          >
+            ← Назад
+          </button>
           <LevelSwitch />
           <DomainPicker />
         </div>

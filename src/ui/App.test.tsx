@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+﻿import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App } from '../app/App.tsx';
@@ -15,7 +15,7 @@ describe('atlas application', () => {
   it('renders the local map and the inspector for the default focus', () => {
     renderApp();
     expect(screen.getByRole('heading', { name: 'Physics Atlas' })).toBeInTheDocument();
-    expect(screen.getByText('Локальная область')).toBeInTheDocument();
+    expect(screen.getByText(/Локальная область/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Сила' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Величина: Сила' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Единица: ньютон' })).toBeInTheDocument();
@@ -96,6 +96,39 @@ describe('atlas application', () => {
     window.dispatchEvent(new HashChangeEvent('hashchange'));
     expect(await screen.findByRole('heading', { level: 2, name: 'Масса' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '7–8' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+it('returns to the previous object with the back button', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    const search = screen.getByRole('combobox', { name: /Поиск по атласу/ });
+    await user.type(search, 'масса');
+    const option = within(screen.getByRole('listbox'))
+      .getAllByRole('option')
+      .find((element) => element.textContent?.includes('Масса') && element.textContent.includes('Величина'));
+    if (!option) throw new Error('В результатах поиска нет величины «Масса»');
+    await user.click(option);
+    expect(screen.getByRole('heading', { level: 2, name: 'Масса' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '← Назад' }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Сила' })).toBeInTheDocument();
+  });
+
+it('explains relations and hop distance on the map', () => {
+    renderApp();
+    expect(screen.getByRole('heading', { level: 3, name: 'Связи' })).toBeInTheDocument();
+    expect(screen.getAllByText(/величина → уравнение/).length).toBeGreaterThan(0);
+    const nodeTitle = document.querySelector('[data-node] title')?.textContent ?? '';
+    expect(nodeTitle).toContain('Шагов от фокуса');
+  });
+
+it('keeps the Find Path draft when switching tabs', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+    await user.type(screen.getByLabelText('Значение 1'), '2');
+    await user.click(screen.getByRole('tab', { name: 'Карточка' }));
+    await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));
+    expect(screen.getByLabelText('Значение 1')).toHaveValue('2');
   });
 
 it('finds the mechanics chain and marks it conditionally valid', async () => {
