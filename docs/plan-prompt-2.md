@@ -1,4 +1,4 @@
-# PROMPT-2 — correctness and reliability plan
+﻿# PROMPT-2 — correctness and reliability plan
 
 Source: [`PROMPT-2.md`](../PROMPT-2.md). Audit evidence: [`audit-2026-11-22.md`](audit-2026-11-22.md).
 
@@ -6,6 +6,12 @@ This plan is the implementation contract for the reliability phase. It preserves
 (React/Vite/TypeScript, JSON knowledge base, Zod, AST, deterministic graph, no backend/CAS) and does
 not start new content until the core gates pass.
 
+## Implementation status (2026-11-22)
+
+Stages 0–9 are implemented on `feat/physics-atlas-mvp`; stage 10 reconciles documentation and
+captures browser proof. Current state: 77 entities, 130 edges, 2 domains, 159 tests passing,
+`validate`/`typecheck`/`build` green. All seed reviews remain `expert: none`. Priority C is a
+proposal only ([`content-plan-kinematics.md`](content-plan-kinematics.md)).
 ## 1. Baseline
 
 At commit `d324112`: `pnpm validate` 77/129/2 with 0 errors, `pnpm typecheck` clean,

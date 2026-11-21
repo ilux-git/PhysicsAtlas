@@ -4,6 +4,22 @@ Source of the requirements: [`PROMPT.md`](../PROMPT.md). This plan is the fixed 
 response to §1/§15 of that document and is updated only with an explicit note when reality
 changes.
 
+## PROMPT-2 reliability phase (2026-11-22)
+
+After the original MVP, a correctness audit was performed
+([`audit-2026-11-22.md`](audit-2026-11-22.md)) and the reliability plan
+([`plan-prompt-2.md`](plan-prompt-2.md)) was implemented:
+
+- formulation origin and expert review are separate fields; any `completed` review needs a
+  reviewer, date and source, and no seed record claims one;
+- `displayLatex` is validated structurally against its AST, not by symbol presence;
+- the parser precedence is fixed and documented; the printer is precedence-safe;
+- the solver refuses `x² = c` as `multiple-solutions` and keeps domain restrictions from both
+  sides;
+- paths expose computation, conditions and review independently; conditions are attributed to
+  equations/laws; no path is called “допустимый”;
+- graph edges have machine-checked contracts; `P = UI` states its direct-current context;
+- current result: 77 entities, 130 edges, 2 domains, 159 tests, clean validate/typecheck/build.
 ## Implementation result (2026-11-21)
 
 The MVP described below is implemented on `feat/physics-atlas-mvp`:
@@ -69,11 +85,11 @@ Canonical, language- and grade-neutral IDs (`q.mass`, `eq.newton2.magnitudes`,
 `unit.newton`, `dim.force`, `cond.inertial-frame`).
 
 Every entity: `id`, `kind`, `slug`, `name {ru, en?}`, `aliases`, `description`,
-`levelPresentations`, `domains`, `sources`, `review.status`.
+`levelPresentations`, `domains`, `sources`, `review.formulation`, `review.expert`.
 
 - `LevelKey = '7-8' | '9' | '10-11'`; one canonical object carries several presentations,
   never duplicated per level or per language.
-- Equation statuses stay separate: authored `physicalReview`, authored `conditionsStatus`,
+- Equation statuses stay separate: authored `review.formulation`/`review.expert`, authored `conditionsStatus`,
   computed `structuralStatus` and `dimensionalStatus` (with messages).
 - Edges: `appears_in`, `expresses`, `derived_from`, `has_unit`, `has_dimension`,
   `equivalent_unit`, `requires_condition`, `related_to`, `has_derivation`, `produces`.
@@ -105,7 +121,7 @@ uniform motion, finite interval; derivations `a = F/m`, `F = A/s`, `t = A/P`; th
 m, a, s, t → F → A → P. Electricity slice after the mechanics gates pass: I, U, R, Q,
 `U = I·R`, `P = U·I`, `Q = I·t`, Ohm's law, steady-current conditions.
 
-All seeded formulas are `standard-form` ("standard school formulation") and state that an
+All seeded formulas are `standard-school` with `expert: none` and state that an
 independent physical review has not been performed. Sources never contain invented page
 numbers or ISBNs.
 

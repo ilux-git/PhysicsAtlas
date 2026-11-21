@@ -1,4 +1,4 @@
-# Architecture decisions
+﻿# Architecture decisions
 
 Short records; each state the decision, why, and what it costs.
 
@@ -21,18 +21,20 @@ which is the point.
 ## ADR-003 — AST is canonical, LaTeX is presentation
 
 **Decision.** Equations store `lhsAst`/`rhsAst`; `displayLatex` is for rendering only. The
-validator warns when an AST variable symbol is missing from the display string.
-**Why.** §5 forbids LaTeX as the only mathematical semantics.
-**Cost.** Content authors write both forms; the validator keeps them aligned.
+validator converts the supported LaTeX subset back to the parser's infix syntax and requires
+structural equality with the stored AST; symbol presence alone is never proof.
+**Why.** §5 forbids LaTeX as the only mathematical semantics, and a display can have the right
+letters with the wrong operators (`F = m + a` for `F = ma`).
+**Cost.** Authors must stay inside a documented LaTeX subset; unsupported markup is a build error.
 
 ## ADR-004 — computed statuses are separate from authored statuses
 
-**Decision.** `physicalReview` and `conditionsStatus` are authored content;
-`structuralStatus` and `dimensionalStatus` are computed on every load and displayed with
-their messages. There is no single `valid` field.
-**Why.** §6 and §7 require independent statuses; a computed check must not be confused with
-a physical review. A dimensionally valid `F = 2ma` must not look approved.
-**Cost.** The UI shows four status chips where a single badge would be simpler.
+**Decision.** `review.formulation`, `review.expert` and `conditionsStatus` are authored;
+`structuralStatus` and `dimensionalStatus` are computed. `review.expert: completed` requires a
+named reviewer, date and source. There is no single `valid` field.
+**Why.** §6 and §7 require independent statuses; a computed check must not be confused with a
+physical review. A dimensionally valid `F = 2ma` must not look approved.
+**Cost.** The UI shows separate chips; path results carry three independent characteristics.
 
 ## ADR-005 — deterministic hand-written SVG map instead of a graph library
 
@@ -53,19 +55,21 @@ object with localized fields rather than duplicated English entities.
 ## ADR-007 — limited algebra, no CAS
 
 **Decision.** Solve for a variable only when it occurs once and every step is invertible;
-otherwise report "unsupported" with a reason. Evaluation supports the AST operations and
-explicit preconditions (zero divisor, even/odd roots, domains).
-**Why.** §5 and §9 ask for basic transformations and honest limits, not a symbolic engine.
-**Cost.** Some textbook problems (variable on both sides, simultaneous equations) are
-reported unsupported; the limitation is documented and surfaced in the UI.
+otherwise report a typed failure. `x² = c` is refused as `multiple-solutions`, never solved
+by picking one root. Domain constraints are collected from both sides before any inversion.
+**Why.** §5 and §9 ask for basic transformations and honest limits; silently dropping a root
+or a denominator restriction is worse than refusing.
+**Cost.** Some textbook problems (quadratic, variable on both sides, simultaneous equations)
+are refused with a reason; documented and surfaced in the UI.
 
 ## ADR-008 — review status wording
 
-**Decision.** Canonical school formulations are marked `standard-form`, never `verified`;
-the UI says the formulation is standard and that an independent physical review has not
-been done. The app does not claim scientific verification it cannot prove.
+**Decision.** Formulation origin is `standard-school/definition/derived/draft`; expert review is
+a separate field `none/requested/completed/rejected`. All seed records are `expert: none`. The UI
+says the formulation is standard and that expert review has not been done.
 **Why.** §7 forbids marking unconfirmed physics as verified.
-**Cost.** All content displays a caveat; the wording must stay consistent everywhere.
+**Cost.** All content displays a review caveat; `completed` needs real reviewer data that does not
+exist yet.
 
 ## ADR-009 — one workspace, URL hash, no router
 
@@ -83,3 +87,26 @@ sync or backend.
 **Why.** §12 forbids a backend without justification; §3 rules out profiles without proven
 need. Exploration is a reading activity, not a course with progress tracking.
 **Cost.** User-supplied values and condition decisions reset on reload.
+
+## ADR-011 — machine-checked edge contracts
+
+**Decision.** Every relation kind declares allowed source/target kinds, origin and direction in
+`EDGE_REGISTRY`; the validator rejects edges that violate it. `derived_from` is explicitly
+target equation → source equation.
+**Why.** PROMPT-2 §9 requires unambiguous graph semantics, not convention.
+**Cost.** New relation kinds require a registry entry and tests.
+
+## ADR-012 — one fixed grammar for formulas
+
+**Decision.** Juxtaposition (implicit multiplication) binds tighter than `*` and `/`; unary minus
+is lower than power; exponents are integer literals. The printer parenthesises by precedence.
+**Why.** `a / b c` must not silently mean `(a/b)·c`.
+**Cost.** Some alternative spellings are rejected; the grammar and examples are documented and
+tested.
+
+## ADR-013 — path characteristics are independent
+
+**Decision.** A path carries `computation`, `conditionsStatus` and `review` separately. Review
+never improves because dimensions match or conditions were confirmed; ranking ignores it.
+**Why.** PROMPT-2 §4: “computable” must not read as “physically verified”.
+**Cost.** The UI has three status blocks instead of one badge.
