@@ -1,10 +1,14 @@
-import { collectQuantityIds } from '../domain/ast.ts';
+import { astEquals, collectQuantityIds } from '../domain/ast.ts';
 import type {
   Diagnostic,
+  DimensionVector,
   Entity,
   EntityKind,
   KnowledgeInput,
 } from '../domain/types.ts';
+import { astToInfix } from '../engines/ast/parse.ts';
+import { solveFor, solvedSideVariable } from '../engines/ast/solve.ts';
+import { checkEquationDimensions } from '../engines/dimensions.ts';
 
 const KIND_PREFIX: Record<EntityKind, string> = {
   quantity: 'q.',
@@ -95,6 +99,16 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
   }
 
   const symbols = new Map<string, string>();
+  const dimensionVectors = new Map(
+    input.dimensions.map((dimension) => [dimension.id, dimension.exponents]),
+  );
+  const quantityDimensions = new Map<string, DimensionVector>();
+  const quantityById = new Map(input.quantities.map((quantity) => [quantity.id, quantity]));
+  const quantitySymbols = new Map(input.quantities.map((quantity) => [quantity.id, quantity.symbol]));
+  for (const quantity of input.quantities) {
+    const vector = dimensionVectors.get(quantity.dimensionId);
+    if (vector) quantityDimensions.set(quantity.id, vector);
+  }
 
   for (const quantity of input.quantities) {
     if (!dimensions.has(quantity.dimensionId)) {
@@ -258,7 +272,17 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
       }
     }
 
+    for (const form of forms) {
+      const check = checkEquationDimensions(form.lhs, form.rhs, quantityDimensions);
+      if (!check.ok) {
+        error(
+          'dimension-mismatch',
+          `Формула ${form.label} уравнения «${equation.id}»: ${check.message ?? 'размерности не совпадают.'}`,
+          equation.id,
+        );
+      }
     }
+  }
 
   for (const derivation of input.derivations) {
     const source = equations.get(derivation.sourceEquationId);
@@ -293,6 +317,36 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
         );
       }
     }
+    if (source && target && source.id !== target.id) {
+      const targetVariable = solvedSideVariable(target);
+      if (!targetVariable) {
+        error(
+          'derivation-unverifiable',
+          `Целевое уравнение «${target.id}» вывода «${derivation.id}» не решается относительно одной величины.`,
+          derivation.id,
+        );
+      } else {
+        const solved = solveFor(source, targetVariable, quantityById);
+        if (!solved.ok) {
+          error(
+            'derivation-unverifiable',
+            `Вывод «${derivation.id}» не проверяется: ${solved.reason}`,
+            derivation.id,
+          );
+        } else {
+          const targetExpression =
+            target.lhsAst.type === 'variable' ? target.rhsAst : target.lhsAst;
+          if (!astEquals(solved.ast, targetExpression)) {
+            error(
+              'derivation-mismatch',
+              `Вывод «${derivation.id}»: получено «${astToInfix(solved.ast, quantitySymbols)}», а в целевом уравнении «${astToInfix(targetExpression, quantitySymbols)}».`,
+              derivation.id,
+            );
+          }
+        }
+      }
+    }
+
     const orders = derivation.steps.map((step) => step.order);
     const expected = orders.map((_, index) => index + 1);
     if (orders.length !== new Set(orders).size || orders.join(',') !== expected.join(',')) {
