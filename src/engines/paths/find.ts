@@ -219,6 +219,10 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
 
     notes.push(...equationNotes(candidate.equation, kb));
     conditionIds.push(...candidate.equation.conditionRefs);
+    for (const lawId of candidate.equation.lawRefs) {
+      const law = kb.laws.find((item) => item.id === lawId);
+      if (law) conditionIds.push(...law.conditionRefs);
+    }
     for (const precondition of candidate.preconditions) {
       const mapped = mapPrecondition(precondition, kb);
       if ('conditionId' in mapped) conditionIds.push(mapped.conditionId);
@@ -340,6 +344,13 @@ export function findPaths(kb: KnowledgeBase, options: FindPathsOptions): FindPat
     for (const step of chain.steps) {
       for (const conditionId of step.equation.conditionRefs) {
         addRequiredBy(conditionId, step.equation.id);
+      }
+      for (const lawId of step.equation.lawRefs) {
+        const law = kb.laws.find((item) => item.id === lawId);
+        if (!law) continue;
+        for (const conditionId of law.conditionRefs) {
+          addRequiredBy(conditionId, law.id);
+        }
       }
       for (const precondition of step.preconditions) {
         const mapped = mapPrecondition(precondition, kb);

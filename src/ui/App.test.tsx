@@ -106,6 +106,7 @@ it('finds the mechanics chain and marks it conditionally valid', async () => {
     expect(screen.getAllByText(/вычисления: символьная цепочка/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/условия: не подтверждены/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/экспертиза: не проводилась/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Требуется:/).length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { level: 3, name: 'Условия применимости' })).toBeInTheDocument();
     expect(document.querySelectorAll('.path-card').length).toBeGreaterThan(0);
     const statuses = screen.getAllByLabelText(/Статус условия/);

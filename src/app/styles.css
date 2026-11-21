@@ -1391,6 +1391,31 @@ code {
   margin: 4px 0 8px;
 }
 
+.path-condition-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.path-condition-list li {
+  display: grid;
+  gap: 2px;
+  border-left: 2px solid var(--line-strong);
+  padding-left: 8px;
+}
+
+.condition-attribution,
+.condition-why {
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.condition-why {
+  color: var(--ink-soft);
+}
+
 .path-review {
   margin-top: 8px;
   font-size: 11px;

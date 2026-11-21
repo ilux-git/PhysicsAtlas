@@ -139,6 +139,9 @@ describe('computational path search', () => {
     expect(path.steps.map((step) => step.computed?.siValue)).toEqual([6, 24, 12]);
     expect(path.steps[2]?.computed?.unitId).toBe('unit.watt');
     expect(path.steps[2]?.computed?.value).toBeCloseTo(12, 10);
+    expect(path.computation.status).toBe('numeric');
+    expect(path.conditionsStatus).toBe('unconfirmed');
+    expect(path.review.expert).toBe('none');
   });
 
   it('respects the depth limit and explains the failure', () => {
@@ -147,7 +150,60 @@ describe('computational path search', () => {
     expect(result.reason).toContain('глубине');
   });
 
-  it('reports a target that no equation solves for', () => {
+  it('reports partial confirmation for a multi-step chain with different conditions', () => {
+    const result = findPaths(kb!, {
+      targetId: 'q.power',
+      knownIds: MECHANICS_KNOWN,
+      confirmedConditionIds: ['cond.inertial-frame'],
+      depthLimit: 3,
+    });
+    expect(result.paths[0]?.conditionsStatus).toBe('partial');
+    const inertial = result.paths[0]?.conditions.find(
+      (condition) => condition.condition.id === 'cond.inertial-frame',
+    );
+    expect(inertial?.requiredBy).toContain('eq.newton2.magnitudes');
+    expect(inertial?.status).toBe('confirmed');
+  });
+
+it('propagates conditions required by a law, not only by its equation', () => {
+    const input = makeValidInput();
+    const law = input.laws[0];
+    if (!law) throw new Error('Нет закона в фикстуре');
+    law.conditionRefs = [...law.conditionRefs, 'cond.nonzero-speed'];
+    const { kb: withLawCondition } = buildKnowledgeBase(input);
+    const result = findPaths(withLawCondition!, {
+      targetId: 'q.speed',
+      knownIds: ['q.distance', 'q.time'],
+      confirmedConditionIds: ['cond.nonzero-time'],
+      depthLimit: 2,
+    });
+    const path = result.paths[0];
+    expect(path?.conditions.map((condition) => condition.condition.id)).toContain('cond.nonzero-speed');
+    expect(path?.conditionsStatus).toBe('partial');
+    const propagated = path?.conditions.find(
+      (condition) => condition.condition.id === 'cond.nonzero-speed',
+    );
+    expect(propagated?.requiredBy).toContain(law.id);
+  });
+
+it('treats a supplied zero denominator as a violated condition and a failed computation', () => {
+    const result = findPaths(kb!, {
+      targetId: 'q.power',
+      knownIds: MECHANICS_KNOWN,
+      depthLimit: 3,
+      values: new Map([
+        ['q.mass', { value: 2, unitId: 'unit.kilogram' }],
+        ['q.acceleration', { value: 3, unitId: 'unit.meter-per-second-squared' }],
+        ['q.displacement', { value: 4, unitId: 'unit.meter' }],
+        ['q.time', { value: 0, unitId: 'unit.second' }],
+      ]),
+    });
+    const path = result.paths[0];
+    expect(path?.conditionsStatus).toBe('violated');
+    expect(path?.computation.status).toBe('failed');
+  });
+
+it('reports a target that no equation solves for', () => {
     const result = findPaths(kb!, { targetId: 'q.force', knownIds: [], depthLimit: 3 });
     const quantities = kb!.quantities;
     expect(quantities.length).toBeGreaterThan(0);

@@ -20,6 +20,12 @@ const CONDITIONS_LABELS = {
   violated: 'нарушены',
 } as const;
 
+const CONDITION_STATUS_LABELS = {
+  confirmed: 'подтверждено',
+  unconfirmed: 'не проверено',
+  violated: 'нарушено',
+} as const;
+
 interface KnownRow {
   id: string;
   value: string;
@@ -330,22 +336,24 @@ export function FindPathPanel() {
                 </ol>
 
                 {path.conditions.length > 0 && (
-                  <div className="chips">
+                  <ul className="path-condition-list">
                     {path.conditions.map((condition) => {
                       const sources = condition.requiredBy
-                        .map((equationId) => kb.equations.find((equation) => equation.id === equationId)?.name.ru ?? equationId)
-                        .join(', ');
+                        .map((id) => kb.entities.get(id)?.name.ru ?? id)
+                        .join('; ');
                       return (
-                        <span
-                          key={condition.condition.id}
-                          className={`status-chip tone-${condition.status === 'confirmed' ? 'ok' : condition.status === 'violated' ? 'danger' : 'warning'}`}
-                          title={`Требуется уравнениями: ${sources}`}
-                        >
-                          {condition.condition.name.ru}
-                        </span>
+                        <li key={condition.condition.id}>
+                          <span
+                            className={`status-chip tone-${condition.status === 'confirmed' ? 'ok' : condition.status === 'violated' ? 'danger' : 'warning'}`}
+                          >
+                            {condition.condition.name.ru}: {CONDITION_STATUS_LABELS[condition.status]}
+                          </span>
+                          <span className="condition-attribution">Требуется: {sources}</span>
+                          <span className="condition-why">{condition.condition.description.ru}</span>
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
                 )}
 
                 {path.unverifiedConstraints.length > 0 && (
