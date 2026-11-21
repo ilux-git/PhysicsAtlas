@@ -14,24 +14,36 @@ describe('seed knowledge base', () => {
   it('contains the mechanics vertical slice', () => {
     expect(kb!.quantities.map((q) => q.id).sort()).toEqual([
       'q.acceleration',
+      'q.charge',
+      'q.current',
       'q.displacement',
       'q.force',
       'q.mass',
       'q.power',
+      'q.resistance',
       'q.time',
       'q.velocity',
+      'q.voltage',
       'q.work',
     ]);
     expect(kb!.equations.map((e) => e.id).sort()).toEqual([
+      'eq.charge.current',
       'eq.newton2.acceleration',
       'eq.newton2.magnitudes',
+      'eq.ohm.current',
+      'eq.ohm.local',
       'eq.power.average',
+      'eq.power.electric',
       'eq.power.time',
       'eq.velocity.uniform',
       'eq.work.constant-force',
       'eq.work.force',
     ]);
-    expect(kb!.derivations).toHaveLength(3);
+    expect(kb!.derivations).toHaveLength(4);
+    expect(kb!.domains.map((domain) => domain.id).sort()).toEqual([
+      'domain.electricity',
+      'domain.mechanics',
+    ]);
   });
 
   it('has level presentations for every teachable object', () => {
@@ -55,5 +67,7 @@ describe('seed knowledge base', () => {
     expect(ids.has('expresses:eq.newton2.magnitudes->law.newton.second')).toBe(true);
     expect(ids.has('derived_from:eq.newton2.acceleration->eq.newton2.magnitudes')).toBe(true);
     expect(ids.has('equivalent_unit:unit.kilometer->unit.meter')).toBe(true);
+    expect(ids.has('expresses:eq.ohm.local->law.ohm')).toBe(true);
+    expect(ids.has('appears_in:q.current->eq.ohm.local')).toBe(true);
   });
 });

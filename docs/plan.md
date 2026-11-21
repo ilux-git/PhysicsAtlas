@@ -4,6 +4,22 @@ Source of the requirements: [`PROMPT.md`](../PROMPT.md). This plan is the fixed 
 response to §1/§15 of that document and is updated only with an explicit note when reality
 changes.
 
+## Implementation result (2026-11-21)
+
+The MVP described below is implemented on `feat/physics-atlas-mvp`:
+
+- `pnpm validate`: 77 entities, 129 derived edges, 2 domains, 0 errors / 0 warnings.
+- `pnpm typecheck`: clean.
+- `pnpm test`: 118 tests in 15 files, all passing.
+- `pnpm build`: production build succeeds (single bundle ≈ 200 KB gzip).
+- Browser walkthrough of the built app: map, inspector, search, levels, domain filter,
+  converter, formula explorer, derivations, and the path panel with numeric evaluation.
+
+Content was extended with the electricity slice after the mechanics gates passed, as planned.
+Deviations from the original plan, all recorded: `tsx` was dropped because the sandbox forbids
+esbuild's piped child process, so the validator runs with Node's native TypeScript stripping;
+Vitest uses the threads pool for the same reason; pnpm's store lives inside the workspace.
+
 ## Environment inventory (verified 2026-11-21)
 
 | Item | Value |
@@ -93,6 +109,10 @@ All seeded formulas are `standard-form` ("standard school formulation") and stat
 independent physical review has not been performed. Sources never contain invented page
 numbers or ISBNs.
 
+**Delivered:** the electricity slice (`I`, `Q`, `U`, `R`; `U = IR`, `I = U/R`, `Q = It`,
+`P = UI`; Ohm's law; five conditions; `A/mA/C/V/Ω`; one derivation) was added after the
+mechanics tests passed, and the map, search and path engine cover both domains.
+
 ## Validation and tests
 
 `pnpm validate` (also `prebuild`) rejects: schema errors, duplicate/invalid IDs, dangling or
@@ -125,7 +145,19 @@ component tests for the main screens.
 7. Levels 7-8, 9, 10-11 work on canonical objects.
 8. Validations and tests pass; docs match what exists.
 
-Each criterion is proven by a named command, test, or captured browser check.
+Each criterion is proven by a named command, test, or captured browser check:
+
+| Criterion | Evidence |
+|---|---|
+| App starts, KB loads | `pnpm build`, browser walkthrough; `src/knowledge/seed.test.ts` |
+| Graph renders and is explorable | `App.test.tsx` (map, filters, domain), `graph.test.ts`, `layout.test.ts` |
+| Search works | `search.test.ts` (name, symbol, formula, alias), `App.test.tsx` |
+| Cards for all seven kinds | `App.test.tsx` plus card branches in `Inspector.tsx` |
+| AST, dimensions, units, transformations | `dimensions.test.ts`, `units.test.ts`, `parse.test.ts`, `evaluate.test.ts`, `solve.test.ts` |
+| Paths and conditions | `find.test.ts`, `App.test.tsx` (conditional → valid → invalid) |
+| Levels 7-8 / 9 / 10-11 | `seed.test.ts` level coverage; `App.test.tsx` level switch |
+| Validation, tests, docs | `pnpm validate`, `pnpm test`, this documentation set |
+| Known limitations | `docs/content-status.md` |
 
 ## Known limitations to keep honest
 

@@ -104,5 +104,40 @@
     ],
     "preconditions": ["cond.nonzero-time", "cond.nonzero-power"],
     "verificationStatus": "structural"
+  },
+  {
+    "id": "der.ohm.current",
+    "kind": "derivation",
+    "slug": "current-from-ohm",
+    "name": { "ru": "Вывод I = U/R из U = IR", "en": "Derive I = U/R from U = IR" },
+    "aliases": [],
+    "description": {
+      "ru": "Алгебраическое преобразование закона Ома: обе части делятся на сопротивление при R ≠ 0."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "status": "standard-form" },
+    "sourceEquationId": "eq.ohm.local",
+    "targetEquationId": "eq.ohm.current",
+    "steps": [
+      {
+        "order": 1,
+        "description": "Разделим обе части на сопротивление R (R ≠ 0).",
+        "operation": "divide-both-sides",
+        "displayFrom": "U = I R",
+        "displayTo": "U/R = I",
+        "precondition": "R ≠ 0"
+      },
+      {
+        "order": 2,
+        "description": "Перепишем равенство, поменяв стороны местами.",
+        "operation": "rewrite",
+        "displayFrom": "U/R = I",
+        "displayTo": "I = U/R"
+      }
+    ],
+    "preconditions": ["cond.nonzero-resistance"],
+    "verificationStatus": "structural"
   }
 ]

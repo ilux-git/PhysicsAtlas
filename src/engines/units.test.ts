@@ -75,6 +75,17 @@ describe('unit conversion', () => {
     });
   });
 
+  it('converts electrical units and rejects cross-dimension pairs', () => {
+    const amperes = convertUnit(1, 'unit.ampere', 'unit.milliampere', units);
+    expect(amperes.ok).toBe(true);
+    if (amperes.ok) expect(amperes.value).toBeCloseTo(1000, 9);
+
+    expect(convertUnit(1, 'unit.volt', 'unit.ohm', units)).toMatchObject({
+      ok: false,
+      code: 'dimension-mismatch',
+    });
+  });
+
   it('reports unknown units', () => {
     expect(convertUnit(1, 'unit.meter', 'unit.unknown', units)).toMatchObject({
       ok: false,

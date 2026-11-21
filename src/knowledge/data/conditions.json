@@ -153,5 +153,90 @@
     "sources": ["source.myakishev-10-11"],
     "review": { "status": "standard-form" },
     "structured": { "type": "nonzero", "quantityId": "q.power" }
+  },
+  {
+    "id": "cond.ohmic-element",
+    "kind": "condition",
+    "slug": "ohmic-element",
+    "name": { "ru": "Омический элемент", "en": "Ohmic element" },
+    "aliases": [],
+    "description": { "ru": "Элемент цепи имеет линейную вольт-амперную характеристику и подчиняется закону Ома." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Проводник ведёт себя как обычное сопротивление." } },
+      "9": { "summary": { "ru": "Закон Ома применим к участку цепи с линейной вольт-амперной характеристикой." } },
+      "10-11": { "summary": { "ru": "Омический элемент: сопротивление не зависит от напряжения и тока в рассматриваемом диапазоне." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "structured": { "type": "material", "value": "ohmic" }
+  },
+  {
+    "id": "cond.constant-resistance",
+    "kind": "condition",
+    "slug": "constant-resistance",
+    "name": { "ru": "Постоянное сопротивление", "en": "Constant resistance" },
+    "aliases": [],
+    "description": { "ru": "Сопротивление участка цепи не меняется в рассматриваемом процессе." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Сопротивление считается неизменным." } },
+      "9": { "summary": { "ru": "Формула закона Ома используется при постоянном сопротивлении." } },
+      "10-11": { "summary": { "ru": "Нагрев или деформация могут изменить сопротивление и нарушить применимость закона Ома." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "structured": { "type": "constancy", "quantityId": "q.resistance" }
+  },
+  {
+    "id": "cond.steady-current",
+    "kind": "condition",
+    "slug": "steady-current",
+    "name": { "ru": "Постоянный ток", "en": "Steady current" },
+    "aliases": [],
+    "description": { "ru": "Сила тока постоянна на рассматриваемом интервале времени." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Ток не меняется за рассматриваемое время." } },
+      "9": { "summary": { "ru": "Формула Q = I t относится к постоянному току." } },
+      "10-11": { "summary": { "ru": "При переменном токе заряд вычисляется как интеграл силы тока по времени." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "structured": { "type": "constancy", "quantityId": "q.current" }
+  },
+  {
+    "id": "cond.same-element",
+    "kind": "condition",
+    "slug": "same-element",
+    "name": { "ru": "Один и тот же элемент цепи", "en": "Same circuit element" },
+    "aliases": [],
+    "description": { "ru": "Напряжение и сила тока в формуле мощности относятся к одному и тому же элементу цепи." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Напряжение и ток берутся для одного и того же участка цепи." } },
+      "9": { "summary": { "ru": "Нельзя подставлять напряжение одного элемента с током другого." } },
+      "10-11": { "summary": { "ru": "P = UI — мощность, выделяемая на элементе, к которому относятся и U, и I." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "structured": { "type": "material", "value": "same-element" }
+  },
+  {
+    "id": "cond.nonzero-resistance",
+    "kind": "condition",
+    "slug": "nonzero-resistance",
+    "name": { "ru": "Сопротивление не равно нулю", "en": "Non-zero resistance" },
+    "aliases": [],
+    "description": { "ru": "Выражение силы тока через напряжение и сопротивление требует ненулевого сопротивления." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Делить на сопротивление можно только при R ≠ 0." } },
+      "9": { "summary": { "ru": "Формула I = U/R не определена при нулевом сопротивлении." } },
+      "10-11": { "summary": { "ru": "Для идеального проводника R = 0 рассматривают отдельную модель." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "structured": { "type": "nonzero", "quantityId": "q.resistance" }
   }
 ]

@@ -45,7 +45,7 @@ is testable and keeps dependencies minimal.
 ## ADR-006 — Russian UI, localisation-ready data
 
 **Decision.** All user text is Russian. Localized fields are `{ru, en?}` with `ru`
-required; English coverage is partial and marked by validator warnings.
+required; English coverage is partial and documented as an unfinished capability.
 **Why.** The audience is Russian school students 7–11 (§1); §4 still requires one canonical
 object with localized fields rather than duplicated English entities.
 **Cost.** No language switcher in the MVP; en content is incomplete.
@@ -66,3 +66,20 @@ the UI says the formulation is standard and that an independent physical review 
 been done. The app does not claim scientific verification it cannot prove.
 **Why.** §7 forbids marking unconfirmed physics as verified.
 **Cost.** All content displays a caveat; the wording must stay consistent everywhere.
+
+## ADR-009 — one workspace, URL hash, no router
+
+**Decision.** The application has a single screen; selected node, level, domain, radius and tab
+live in the URL hash. There is no router dependency, and no persistence.
+**Why.** §10 describes one exploration screen; deep-linkable cards make the atlas shareable.
+A router would add states and a dependency the product does not have.
+**Cost.** In-app navigation does not create back/forward entries; state resets when the URL is
+replaced.
+
+## ADR-010 — no persistence or accounts
+
+**Decision.** Nothing is stored beyond the current tab (URL hash). No localStorage, accounts,
+sync or backend.
+**Why.** §12 forbids a backend without justification; §3 rules out profiles without proven
+need. Exploration is a reading activity, not a course with progress tracking.
+**Cost.** User-supplied values and condition decisions reset on reload.

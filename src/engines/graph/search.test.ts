@@ -45,6 +45,16 @@ describe('atlas search', () => {
     expect(hits[0]?.field).toBe('id');
   });
 
+  it('finds electricity quantities after the content extension', () => {
+    const voltage = searchAtlas(index, 'напряжение');
+    expect(voltage[0]?.entity.id).toBe('q.voltage');
+
+    const ohm = searchAtlas(index, 'закон Ома');
+    const ids = ohm.map((hit) => hit.entity.id);
+    expect(ids).toContain('law.ohm');
+    expect(ids).toContain('eq.ohm.local');
+  });
+
   it('filters by entity kind and respects the limit', () => {
     const laws = searchAtlas(index, 'закон', { kinds: ['law'] });
     expect(laws.every((hit) => hit.entity.kind === 'law')).toBe(true);

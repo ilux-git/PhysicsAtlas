@@ -160,6 +160,38 @@ describe('computational path search', () => {
     expect(result.paths[0]?.steps).toHaveLength(0);
   });
 
+  it('finds a one-step electrical path and respects its condition', () => {
+    const conditional = findPaths(kb!, {
+      targetId: 'q.power',
+      knownIds: ['q.voltage', 'q.current'],
+      depthLimit: 2,
+    });
+    expect(conditional.paths[0]?.steps.map((step) => step.equation.id)).toEqual([
+      'eq.power.electric',
+    ]);
+    expect(conditional.paths[0]?.status).toBe('conditional');
+
+    const valid = findPaths(kb!, {
+      targetId: 'q.power',
+      knownIds: ['q.voltage', 'q.current'],
+      confirmedConditionIds: ['cond.same-element'],
+      depthLimit: 2,
+    });
+    expect(valid.paths[0]?.status).toBe('valid');
+  });
+
+  it('builds a cross-domain chain U, R → I → P', () => {
+    const result = findPaths(kb!, {
+      targetId: 'q.power',
+      knownIds: ['q.voltage', 'q.resistance'],
+      depthLimit: 2,
+    });
+    expect(result.paths[0]?.steps.map((step) => step.equation.id)).toEqual([
+      'eq.ohm.current',
+      'eq.power.electric',
+    ]);
+  });
+
   it('terminates on cyclic computational dependencies', () => {
     const { kb: cyclic } = buildKnowledgeBase(cyclicKnowledge());
     const result = findPaths(cyclic!, {

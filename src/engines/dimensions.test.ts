@@ -17,6 +17,8 @@ const SYMBOLS = new Map([
   ['t', 'q.time'],
   ['A', 'q.work'],
   ['P', 'q.power'],
+  ['U', 'q.voltage'],
+  ['I', 'q.current'],
 ]);
 
 function options(): ParseOptions {
@@ -77,6 +79,11 @@ describe('equation dimension checks', () => {
     );
     expect(check.ok).toBe(false);
     expect(check.message).toContain('L·M·T⁻²');
+  });
+
+  it('computes the electrical dimensions', () => {
+    expect(formatDimension(dims('U I'))).toBe('L²·M·T⁻³');
+    expect(formatDimension(dims('U / I'))).toBe('L²·M·T⁻³·I⁻²');
   });
 
   it('accepts the seeded equations', () => {

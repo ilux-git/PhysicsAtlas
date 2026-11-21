@@ -115,5 +115,57 @@
     "sources": ["source.si-brochure-2019"],
     "review": { "status": "standard-form" },
     "exponents": { "L": 0, "M": 0, "T": 0, "I": 0, "Th": 0, "N": 0, "J": 0 }
+  },
+  {
+    "id": "dim.current",
+    "kind": "dimension",
+    "slug": "current",
+    "name": { "ru": "Сила тока", "en": "Electric current" },
+    "aliases": [],
+    "description": { "ru": "Базовая размерность силы тока. В СИ измеряется в амперах." },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.si-brochure-2019"],
+    "review": { "status": "standard-form" },
+    "exponents": { "L": 0, "M": 0, "T": 0, "I": 1, "Th": 0, "N": 0, "J": 0 }
+  },
+  {
+    "id": "dim.charge",
+    "kind": "dimension",
+    "slug": "charge",
+    "name": { "ru": "Электрический заряд", "en": "Electric charge" },
+    "aliases": [],
+    "description": { "ru": "Размерность заряда: сила тока, умноженная на время (I·T)." },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.si-brochure-2019"],
+    "review": { "status": "standard-form" },
+    "exponents": { "L": 0, "M": 0, "T": 1, "I": 1, "Th": 0, "N": 0, "J": 0 }
+  },
+  {
+    "id": "dim.voltage",
+    "kind": "dimension",
+    "slug": "voltage",
+    "name": { "ru": "Напряжение", "en": "Voltage" },
+    "aliases": [],
+    "description": { "ru": "Размерность напряжения: M·L²·T⁻³·I⁻¹." },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.si-brochure-2019"],
+    "review": { "status": "standard-form" },
+    "exponents": { "L": 2, "M": 1, "T": -3, "I": -1, "Th": 0, "N": 0, "J": 0 }
+  },
+  {
+    "id": "dim.resistance",
+    "kind": "dimension",
+    "slug": "resistance",
+    "name": { "ru": "Сопротивление", "en": "Resistance" },
+    "aliases": [],
+    "description": { "ru": "Размерность сопротивления: M·L²·T⁻³·I⁻²." },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.si-brochure-2019"],
+    "review": { "status": "standard-form" },
+    "exponents": { "L": 2, "M": 1, "T": -3, "I": -2, "Th": 0, "N": 0, "J": 0 }
   }
 ]

@@ -20,5 +20,24 @@
     "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
     "review": { "status": "standard-form" },
     "conditionRefs": ["cond.inertial-frame", "cond.constant-mass"]
+  },
+  {
+    "id": "law.ohm",
+    "kind": "law",
+    "slug": "ohms-law",
+    "name": { "ru": "Закон Ома для участка цепи", "en": "Ohm's law" },
+    "aliases": [{ "ru": "закон Ома" }],
+    "description": {
+      "ru": "Сила тока на участке цепи прямо пропорциональна напряжению и обратно пропорциональна сопротивлению участка."
+    },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Закон Ома: ток растёт с напряжением и падает с сопротивлением." } },
+      "9": { "summary": { "ru": "I = U/R: сила тока прямо пропорциональна напряжению и обратно пропорциональна сопротивлению." } },
+      "10-11": { "summary": { "ru": "Для омического участка при постоянном сопротивлении I = U/R; отклонения означают нелинейность или изменение условий." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance"]
   }
 ]

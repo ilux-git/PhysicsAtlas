@@ -220,5 +220,125 @@
     },
     "physicalReview": "standard-form",
     "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.ohm.local",
+    "kind": "equation",
+    "slug": "ohm-local",
+    "name": { "ru": "Закон Ома для участка цепи", "en": "Ohm's law for a circuit section" },
+    "aliases": [{ "ru": "U = IR" }],
+    "description": {
+      "ru": "Связь напряжения, силы тока и сопротивления на омическом участке цепи при постоянном сопротивлении."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.voltage" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.current" },
+      "right": { "type": "variable", "quantityId": "q.resistance" }
+    },
+    "displayLatex": "U = I R",
+    "alternativeForms": [],
+    "lawRefs": ["law.ohm"],
+    "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Скалярная запись для участка цепи; подразумевается один и тот же участок для U и I." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.ohm.current",
+    "kind": "equation",
+    "slug": "ohm-current",
+    "name": { "ru": "Сила тока по закону Ома", "en": "Current from Ohm's law" },
+    "aliases": [{ "ru": "I = U/R" }],
+    "description": {
+      "ru": "Выражение силы тока через напряжение и сопротивление; алгебраическое следствие закона Ома при R ≠ 0."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.current" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.voltage" },
+      "right": { "type": "variable", "quantityId": "q.resistance" }
+    },
+    "displayLatex": "I = \\frac{U}{R}",
+    "alternativeForms": [],
+    "lawRefs": ["law.ohm"],
+    "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance", "cond.nonzero-resistance"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевом сопротивлении выражение не определено." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.charge.current",
+    "kind": "equation",
+    "slug": "charge-through-current",
+    "name": { "ru": "Заряд через силу тока", "en": "Charge from current" },
+    "aliases": [{ "ru": "Q = I t" }],
+    "description": {
+      "ru": "Заряд, прошедший через сечение проводника при постоянном токе, равен произведению силы тока на время."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.charge" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.current" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "Q = I t",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.steady-current"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Постоянный ток; при переменном токе нужен интеграл по времени." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.electric",
+    "kind": "equation",
+    "slug": "electric-power",
+    "name": { "ru": "Мощность электрического тока", "en": "Electric power" },
+    "aliases": [{ "ru": "P = UI" }],
+    "description": {
+      "ru": "Мощность, выделяемая на элементе цепи, равна произведению напряжения на силу тока через этот элемент."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "lhsAst": { "type": "variable", "quantityId": "q.power" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.voltage" },
+      "right": { "type": "variable", "quantityId": "q.current" }
+    },
+    "displayLatex": "P = U I",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.same-element"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Мощность на элементе: U и I относятся к одному и тому же элементу цепи." }
+    },
+    "physicalReview": "standard-form",
+    "conditionsStatus": "explicit"
   }
 ]

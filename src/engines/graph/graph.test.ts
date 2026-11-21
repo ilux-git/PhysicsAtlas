@@ -58,7 +58,7 @@ describe('graph build and queries', () => {
   });
 
   it('filters entities and edges', () => {
-    expect(filterEntities(graph, (entity) => entity.kind === 'quantity')).toHaveLength(8);
+    expect(filterEntities(graph, (entity) => entity.kind === 'quantity')).toHaveLength(12);
     const unitEdges = edgesOfKind(graph, 'equivalent_unit');
     expect(unitEdges.some((edge) => edge.from === 'unit.kilometer' && edge.to === 'unit.meter')).toBe(true);
   });

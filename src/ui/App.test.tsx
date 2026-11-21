@@ -153,7 +153,27 @@ describe('atlas application', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Связанные законы' })).toBeInTheDocument();
   });
 
-  it('shows derivation steps and the structural check', async () => {
+  it('filters the map by physics domain', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    expect(screen.getByRole('button', { name: 'Уравнение: Второй закон Ньютона (модули)' })).toBeInTheDocument();
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Раздел физики' }), 'domain.electricity');
+    expect(
+      screen.queryByRole('button', { name: 'Уравнение: Второй закон Ньютона (модули)' }),
+    ).not.toBeInTheDocument();
+
+    const search = screen.getByRole('combobox', { name: /Поиск по атласу/ });
+    await user.type(search, 'напряжение');
+    const option = within(screen.getByRole('listbox'))
+      .getAllByRole('option')
+      .find((element) => element.textContent?.includes('Напряжение'));
+    if (!option) throw new Error('В результатах поиска нет величины «Напряжение»');
+    await user.click(option);
+    expect(screen.getByRole('button', { name: 'Уравнение: Закон Ома для участка цепи' })).toBeInTheDocument();
+  });
+
+it('shows derivation steps and the structural check', async () => {
     const user = userEvent.setup();
     window.history.replaceState(null, '', '#node=der.newton2.acceleration');
     renderApp();

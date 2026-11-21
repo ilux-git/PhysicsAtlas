@@ -174,5 +174,93 @@
     "unitIds": ["unit.watt", "unit.kilowatt"],
     "preferredUnitId": "unit.watt",
     "definition": { "ru": "Мощность — скалярная величина, характеризующая быстроту совершения работы." }
+  },
+  {
+    "id": "q.current",
+    "kind": "quantity",
+    "slug": "current",
+    "name": { "ru": "Сила тока", "en": "Electric current" },
+    "aliases": [{ "ru": "ток" }],
+    "description": { "ru": "Скалярная величина, равная заряду, проходящему через сечение проводника за единицу времени." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Электрический ток — направленное движение заряженных частиц; сила тока показывает, сколько заряда проходит за секунду." } },
+      "9": { "summary": { "ru": "Сила тока I — отношение заряда к интервалу времени; измеряется в амперах." } },
+      "10-11": { "summary": { "ru": "Сила тока — скалярная величина; для постоянного тока I = Q/t, в общем случае I = dQ/dt." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "I",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.current",
+    "unitIds": ["unit.ampere", "unit.milliampere"],
+    "preferredUnitId": "unit.ampere",
+    "definition": { "ru": "Сила тока — скалярная величина, характеризующая упорядоченное движение зарядов." }
+  },
+  {
+    "id": "q.charge",
+    "kind": "quantity",
+    "slug": "charge",
+    "name": { "ru": "Электрический заряд", "en": "Electric charge" },
+    "aliases": [{ "ru": "заряд" }],
+    "description": { "ru": "Скалярная величина, характеризующая количество электричества." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Заряд показывает, сколько электричества прошло через проводник." } },
+      "9": { "summary": { "ru": "Заряд измеряется в кулонах; при постоянном токе Q = I t." } },
+      "10-11": { "summary": { "ru": "Электрический заряд квантуется и сохраняется; в проводнике переносится носителями заряда." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "Q",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.charge",
+    "unitIds": ["unit.coulomb"],
+    "preferredUnitId": "unit.coulomb",
+    "definition": { "ru": "Электрический заряд — скалярная величина, мера количества электричества." }
+  },
+  {
+    "id": "q.voltage",
+    "kind": "quantity",
+    "slug": "voltage",
+    "name": { "ru": "Напряжение", "en": "Voltage" },
+    "aliases": [{ "ru": "электрическое напряжение" }],
+    "description": { "ru": "Скалярная величина, характеризующая работу электрического поля при переносе единичного заряда на участке цепи." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Напряжение показывает, насколько электрическое поле «толкает» заряды на участке цепи." } },
+      "9": { "summary": { "ru": "Напряжение измеряется в вольтах и характеризует участок электрической цепи." } },
+      "10-11": { "summary": { "ru": "Напряжение — разность потенциалов; для омического участка U = IR." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "U",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.voltage",
+    "unitIds": ["unit.volt"],
+    "preferredUnitId": "unit.volt",
+    "definition": { "ru": "Напряжение — скалярная величина, равная работе поля по переносу заряда, отнесённой к величине заряда." }
+  },
+  {
+    "id": "q.resistance",
+    "kind": "quantity",
+    "slug": "resistance",
+    "name": { "ru": "Сопротивление", "en": "Resistance" },
+    "aliases": [{ "ru": "электрическое сопротивление" }],
+    "description": { "ru": "Скалярная величина, характеризующая противодействие проводника электрическому току." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Сопротивление показывает, насколько трудно току идти через проводник." } },
+      "9": { "summary": { "ru": "Сопротивление измеряется в омах и зависит от материала и размеров проводника." } },
+      "10-11": { "summary": { "ru": "Для омического элемента сопротивление постоянно, и связь напряжения и тока линейна: U = IR." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "status": "standard-form" },
+    "symbol": "R",
+    "quantityKind": "scalar",
+    "dimensionId": "dim.resistance",
+    "unitIds": ["unit.ohm"],
+    "preferredUnitId": "unit.ohm",
+    "definition": { "ru": "Сопротивление — скалярная величина, характеризующая противодействие проводника току." }
   }
 ]
