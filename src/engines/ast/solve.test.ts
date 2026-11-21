@@ -3,6 +3,7 @@ import { astEquals } from '../../domain/ast.ts';
 import type { AstNode, Equation, Quantity } from '../../domain/types.ts';
 import { loadKnowledgeBase } from '../../knowledge/index.ts';
 import { baseEntity } from '../../test/factories.ts';
+import { evaluate, evaluateEquation } from './evaluate.ts';
 import { solveFor } from './solve.ts';
 
 const { kb } = loadKnowledgeBase();
@@ -94,6 +95,136 @@ describe('limited algebraic solver', () => {
     const result = solveFor(equation, 'q.force', quantities);
     expect(result.ok).toBe(false);
     if (result.ok) return;
+    expect(result.code).toBe('domain-violation');
     expect(result.reason).toContain('ноль');
+  });
+
+  it('refuses a square equation instead of selecting one root', () => {
+    const equation = equationWith(
+      'eq.test.square',
+      { type: 'constant', name: '9', value: 9 },
+      { type: 'power', base: { type: 'variable', quantityId: 'q.displacement' }, exponent: 2 },
+    );
+    const result = solveFor(equation, 'q.displacement', quantities);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.code).toBe('multiple-solutions');
+    expect(result.reason).toContain('±');
+  });
+
+  it('distinguishes a square equation with no real solutions', () => {
+    const equation = equationWith(
+      'eq.test.square-negative',
+      { type: 'constant', name: '-1', value: -1 },
+      { type: 'power', base: { type: 'variable', quantityId: 'q.displacement' }, exponent: 2 },
+    );
+    const result = solveFor(equation, 'q.displacement', quantities);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.code).toBe('no-real-solutions');
+  });
+
+  it('solves a principal square root and rejects a negative right side', () => {
+    const equation = equationWith(
+      'eq.test.root',
+      { type: 'variable', quantityId: 'q.time' },
+      { type: 'sqrt', arg: { type: 'variable', quantityId: 'q.displacement' } },
+    );
+    const solved = solveFor(equation, 'q.displacement', quantities);
+    expect(solved.ok).toBe(true);
+    if (solved.ok) {
+      expect(solved.ast).toEqual({
+        type: 'power',
+        base: { type: 'variable', quantityId: 'q.time' },
+        exponent: 2,
+      });
+      expect(solved.preconditions.some((item) => item.text.includes('t ≥ 0'))).toBe(true);
+    }
+
+    const negative = equationWith(
+      'eq.test.root-negative',
+      { type: 'constant', name: '-4', value: -4 },
+      { type: 'sqrt', arg: { type: 'variable', quantityId: 'q.displacement' } },
+    );
+    const refused = solveFor(negative, 'q.displacement', quantities);
+    expect(refused.ok).toBe(false);
+    if (!refused.ok) expect(refused.code).toBe('no-real-solutions');
+  });
+
+  it('keeps domain constraints that are outside the target path', () => {
+    const square = equationWith(
+      'eq.test.domain-root',
+      { type: 'variable', quantityId: 'q.velocity' },
+      {
+        type: 'add',
+        left: { type: 'variable', quantityId: 'q.time' },
+        right: { type: 'sqrt', arg: { type: 'variable', quantityId: 'q.displacement' } },
+      },
+    );
+    const solved = solveFor(square, 'q.velocity', quantities);
+    expect(solved.ok).toBe(true);
+    if (solved.ok) {
+      expect(solved.preconditions.some((item) => item.kind === 'nonnegative' && item.text.includes('s'))).toBe(true);
+    }
+
+    const division = equationWith(
+      'eq.test.domain-division',
+      { type: 'variable', quantityId: 'q.velocity' },
+      {
+        type: 'add',
+        left: { type: 'variable', quantityId: 'q.time' },
+        right: {
+          type: 'divide',
+          left: { type: 'constant', name: '1', value: 1 },
+          right: { type: 'variable', quantityId: 'q.displacement' },
+        },
+      },
+    );
+    const divided = solveFor(division, 'q.velocity', quantities);
+    expect(divided.ok).toBe(true);
+    if (divided.ok) {
+      expect(divided.preconditions.some((item) => item.kind === 'nonzero' && item.text.includes('s'))).toBe(true);
+    }
+  });
+
+  it('reports a literal domain violation in the source equation', () => {
+    const equation = equationWith(
+      'eq.test.domain-broken',
+      { type: 'variable', quantityId: 'q.velocity' },
+      {
+        type: 'add',
+        left: { type: 'variable', quantityId: 'q.time' },
+        right: { type: 'sqrt', arg: { type: 'constant', name: '-1', value: -1 } },
+      },
+    );
+    const result = solveFor(equation, 'q.velocity', quantities);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.code).toBe('domain-violation');
+  });
+
+  it('refuses unsupported powers, including negative exponents', () => {
+    const equation = equationWith(
+      'eq.test.negative-power',
+      { type: 'variable', quantityId: 'q.time' },
+      { type: 'power', base: { type: 'variable', quantityId: 'q.acceleration' }, exponent: -1 },
+    );
+    const result = solveFor(equation, 'q.acceleration', quantities);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.code).toBe('unsupported-power');
+  });
+
+  it('returns a numerically consistent solution for the source equation', () => {
+    const equation = seededEquation('eq.newton2.magnitudes');
+    const result = solveFor(equation, 'q.acceleration', quantities);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const values = new Map([
+      ['q.force', 6],
+      ['q.mass', 2],
+      ['q.acceleration', 3],
+    ]);
+    const check = evaluateEquation(equation.lhsAst, equation.rhsAst, values);
+    expect(check.difference).toBeCloseTo(0, 12);
+    expect(evaluate(result.ast, values)).toBeCloseTo(3, 12);
   });
 });
