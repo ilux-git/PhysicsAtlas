@@ -145,7 +145,7 @@ class Parser {
       const implicitMultiplication =
         token.type === 'number' || token.type === 'ident' || token.type === 'lparen';
       if (implicitMultiplication) {
-        const precedence = 2;
+        const precedence = 3;
         if (precedence < minPrecedence) break;
         const right = this.parseBinary(precedence + 1);
         left = { type: 'multiply', left, right };
@@ -320,26 +320,57 @@ export function parseEquation(
   return { lhs: parseExpression(lhsText, options), rhs: parseExpression(rhsText, options) };
 }
 
+function astPrecedence(node: AstNode): number {
+  switch (node.type) {
+    case 'add':
+    case 'subtract':
+      return 1;
+    case 'multiply':
+    case 'divide':
+      return 2;
+    case 'negate':
+      return 3;
+    case 'power':
+    case 'sqrt':
+      return 4;
+    case 'variable':
+    case 'constant':
+      return 5;
+  }
+}
+
 export function astToInfix(node: AstNode, quantitySymbols?: ReadonlyMap<string, string>): string {
   const symbol = (quantityId: string): string => quantitySymbols?.get(quantityId) ?? quantityId;
+  const render = (child: AstNode, minPrecedence: number, side: 'left' | 'right'): string => {
+    const text = astToInfix(child, quantitySymbols);
+    const precedence = astPrecedence(child);
+    const needsParentheses =
+      precedence < minPrecedence || (side === 'right' && precedence === minPrecedence);
+    return needsParentheses ? `(${text})` : text;
+  };
+
   switch (node.type) {
     case 'variable':
       return symbol(node.quantityId);
     case 'constant':
       return node.display ?? String(node.value);
     case 'negate':
-      return `−${astToInfix(node.arg, quantitySymbols)}`;
+      return `−${render(node.arg, 3, 'right')}`;
     case 'sqrt':
       return `sqrt(${astToInfix(node.arg, quantitySymbols)})`;
-    case 'power':
-      return `${astToInfix(node.base, quantitySymbols)}^${node.exponent}`;
+    case 'power': {
+      const atomLike =
+        node.base.type === 'variable' || node.base.type === 'constant' || node.base.type === 'sqrt';
+      const base = atomLike ? astToInfix(node.base, quantitySymbols) : `(${astToInfix(node.base, quantitySymbols)})`;
+      return `${base}^${node.exponent}`;
+    }
     case 'add':
-      return `${astToInfix(node.left, quantitySymbols)} + ${astToInfix(node.right, quantitySymbols)}`;
+      return `${render(node.left, 1, 'left')} + ${render(node.right, 1, 'right')}`;
     case 'subtract':
-      return `${astToInfix(node.left, quantitySymbols)} − ${astToInfix(node.right, quantitySymbols)}`;
+      return `${render(node.left, 1, 'left')} − ${render(node.right, 1, 'right')}`;
     case 'multiply':
-      return `${astToInfix(node.left, quantitySymbols)} · ${astToInfix(node.right, quantitySymbols)}`;
+      return `${render(node.left, 2, 'left')} · ${render(node.right, 2, 'right')}`;
     case 'divide':
-      return `${astToInfix(node.left, quantitySymbols)} / ${astToInfix(node.right, quantitySymbols)}`;
+      return `${render(node.left, 2, 'left')} / ${render(node.right, 2, 'right')}`;
   }
 }
