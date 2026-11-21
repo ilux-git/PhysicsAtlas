@@ -1,4 +1,4 @@
-# Physics Atlas — implementation plan
+﻿# Physics Atlas — implementation plan
 
 Source of the requirements: [`PROMPT.md`](../PROMPT.md). This plan is the fixed technical
 response to §1/§15 of that document and is updated only with an explicit note when reality
@@ -10,7 +10,7 @@ The MVP described below is implemented on `feat/physics-atlas-mvp`:
 
 - `pnpm validate`: 77 entities, 129 derived edges, 2 domains, 0 errors / 0 warnings.
 - `pnpm typecheck`: clean.
-- `pnpm test`: 118 tests in 15 files, all passing.
+- `pnpm test`: 119 tests in 15 files, all passing.
 - `pnpm build`: production build succeeds (single bundle ≈ 200 KB gzip).
 - Browser walkthrough of the built app: map, inspector, search, levels, domain filter,
   converter, formula explorer, derivations, and the path panel with numeric evaluation.

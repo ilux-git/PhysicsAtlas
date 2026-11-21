@@ -14,7 +14,7 @@ export function Formula({ latex, block = false, className }: FormulaProps) {
         throwOnError: false,
         displayMode: block,
         strict: false,
-        output: 'html',
+        output: 'htmlAndMathml',
       });
     } catch {
       return null;

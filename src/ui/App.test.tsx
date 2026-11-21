@@ -89,7 +89,15 @@ describe('atlas application', () => {
     expect(screen.getByRole('button', { name: '10–11' })).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('finds the mechanics chain and marks it conditionally valid', async () => {
+  it('reacts to an external hash change without a page reload', async () => {
+    renderApp();
+    window.history.replaceState(null, '', '#node=q.mass&level=7-8&tab=card');
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Масса' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '7–8' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+it('finds the mechanics chain and marks it conditionally valid', async () => {
     const user = userEvent.setup();
     renderApp();
     await user.click(screen.getByRole('tab', { name: 'Поиск пути' }));

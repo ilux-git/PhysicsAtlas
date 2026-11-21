@@ -12,6 +12,16 @@ export const ENTITY_KIND_LABELS: Record<EntityKind, string> = {
   derivation: 'Вывод',
 };
 
+export const ENTITY_KIND_GLYPH: Record<EntityKind, string> = {
+  quantity: '●',
+  equation: '=',
+  law: '§',
+  unit: '▪',
+  dimension: '△',
+  condition: '!',
+  derivation: '⇒',
+};
+
 export const ENTITY_KIND_ORDER: readonly EntityKind[] = [
   'quantity',
   'equation',

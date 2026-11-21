@@ -128,7 +128,7 @@ function QuantityBody({ quantity }: { quantity: Quantity }) {
         <p>{quantity.definition.ru}</p>
       </Section>
 
-      <Section title={`Изложение для ${LEVEL_LABELS[state.level]}`}>
+      <Section title={`Изложение: ${LEVEL_LABELS[state.level]}`}>
         <LevelText entity={quantity} />
       </Section>
 
@@ -181,7 +181,7 @@ function QuantityBody({ quantity }: { quantity: Quantity }) {
         {lawIds.length > 0 && (
           <div className="chips">
             {lawIds.map((lawId) => (
-              <EntityChip key={lawId} id={lawId} />
+              <EntityChip key={lawId} id={lawId} showKind />
             ))}
           </div>
         )}
@@ -352,7 +352,7 @@ function LawBody({ law }: { law: Law }) {
 
   return (
     <>
-      <Section title={`Изложение для ${LEVEL_LABELS[state.level]}`}>
+      <Section title={`Изложение: ${LEVEL_LABELS[state.level]}`}>
         <LevelText entity={law} />
       </Section>
       <Section title="Математические формы">
@@ -474,7 +474,7 @@ function ConditionBody({ condition }: { condition: Condition }) {
 
   return (
     <>
-      <Section title={`Изложение для ${LEVEL_LABELS[state.level]}`}>
+      <Section title={`Изложение: ${LEVEL_LABELS[state.level]}`}>
         <LevelText entity={condition} />
       </Section>
       {condition.structured && (

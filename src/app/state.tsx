@@ -223,6 +223,22 @@ export function AtlasProvider({ kb, children }: { kb: KnowledgeBase; children: R
     }
   }, [state.selectedId, state.level, state.domain, state.radius, state.tab]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onHashChange = (): void => {
+      const parsed = parseHash(window.location.hash);
+      if (parsed.selectedId && kb.entities.has(parsed.selectedId)) {
+        dispatch({ type: 'select', id: parsed.selectedId });
+      }
+      if (parsed.level) dispatch({ type: 'level', level: parsed.level });
+      if (parsed.domain) dispatch({ type: 'domain', domain: parsed.domain });
+      if (parsed.radius) dispatch({ type: 'radius', radius: parsed.radius });
+      if (parsed.tab) dispatch({ type: 'tab', tab: parsed.tab });
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [kb]);
+
   const value = useMemo<AtlasContextValue>(
     () => ({ kb, graph, searchIndex, state, dispatch }),
     [kb, graph, searchIndex, state],

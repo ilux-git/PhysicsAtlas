@@ -863,6 +863,16 @@ code {
   color: var(--ink-faint);
 }
 
+.chip-kind {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
 .kind-dot {
   display: inline-block;
   width: 8px;
