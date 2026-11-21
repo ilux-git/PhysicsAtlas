@@ -7,7 +7,7 @@ import type {
 } from '../domain/types.ts';
 import { deriveEdges } from './derive.ts';
 import { rawKnowledge } from './raw.ts';
-import { validateKnowledge } from './validate.ts';
+import { validateEdges, validateKnowledge } from './validate.ts';
 
 export interface BuildResult {
   kb: KnowledgeBase | null;
@@ -47,6 +47,9 @@ export function buildKnowledgeBase(input: KnowledgeInput): BuildResult {
     if (!entities.has(entity.id)) entities.set(entity.id, entity);
   }
 
+  const edges = deriveEdges(input);
+  diagnostics.push(...validateEdges(edges, entities));
+
   const kb: KnowledgeBase = {
     entities,
     quantities: input.quantities,
@@ -58,7 +61,7 @@ export function buildKnowledgeBase(input: KnowledgeInput): BuildResult {
     derivations: input.derivations,
     domains: input.domains,
     sources: input.sources,
-    edges: deriveEdges(input),
+    edges,
     diagnostics,
   };
 

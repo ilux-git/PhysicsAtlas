@@ -1,7 +1,9 @@
 import { astEquals, collectQuantityIds } from '../domain/ast.ts';
+import { EDGE_REGISTRY } from '../domain/edges.ts';
 import type {
   Diagnostic,
   DimensionVector,
+  Edge,
   Entity,
   EntityKind,
   KnowledgeInput,
@@ -435,6 +437,46 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
     }
   }
 
+  return diagnostics;
+}
+
+export function validateEdges(
+  edges: readonly Edge[],
+  entities: ReadonlyMap<string, Entity>,
+): Diagnostic[] {
+  const diagnostics: Diagnostic[] = [];
+  for (const edge of edges) {
+    const contract = EDGE_REGISTRY[edge.kind];
+    const from = entities.get(edge.from);
+    const to = entities.get(edge.to);
+    if (!from || !to) {
+      diagnostics.push({
+        severity: 'error',
+        code: 'edge-missing-node',
+        message: `Ребро «${edge.id}» ссылается на несуществующую сущность.`,
+        entityId: edge.id,
+      });
+      continue;
+    }
+    const allowedOrigin =
+      contract.origin === 'both' || contract.origin === edge.origin;
+    if (!contract.from.includes(from.kind) || !contract.to.includes(to.kind)) {
+      diagnostics.push({
+        severity: 'error',
+        code: 'edge-type-invalid',
+        message: `Ребро «${edge.id}» имеет недопустимые концы: ${from.kind} → ${to.kind}; контракт: ${contract.direction}.`,
+        entityId: edge.id,
+      });
+    }
+    if (!allowedOrigin) {
+      diagnostics.push({
+        severity: 'error',
+        code: 'edge-origin-invalid',
+        message: `Ребро «${edge.id}» имеет происхождение «${edge.origin}», а контракт требует «${contract.origin}».`,
+        entityId: edge.id,
+      });
+    }
+  }
   return diagnostics;
 }
 
