@@ -108,6 +108,38 @@ describe('knowledge base validation', () => {
     expect(codes(diagnostics)).toContain('unit-group-dimension');
   });
 
+  it('rejects a display that parses but disagrees with the AST', () => {
+    const input = mutated((kb) => {
+      kb.equations[0].displayLatex = 'v = s + t';
+    });
+    const { diagnostics } = buildKnowledgeBase(input);
+    expect(codes(diagnostics)).toContain('display-ast-mismatch');
+  });
+
+  it('rejects unsupported display markup', () => {
+    const input = mutated((kb) => {
+      kb.equations[0].displayLatex = 'v = \\mathrm{s}/t';
+    });
+    const { diagnostics } = buildKnowledgeBase(input);
+    expect(codes(diagnostics)).toContain('display-latex-unsupported');
+  });
+
+  it('rejects an alternative form with a different variable set', () => {
+    const input = mutated((kb) => {
+      kb.equations[0].alternativeForms = [
+        {
+          id: 'eq.speed.alt',
+          note: { ru: 'Тестовая форма' },
+          lhsAst: { type: 'variable', quantityId: 'q.speed' },
+          rhsAst: { type: 'variable', quantityId: 'q.speed' },
+          displayLatex: 'v = v',
+        },
+      ];
+    });
+    const { diagnostics } = buildKnowledgeBase(input);
+    expect(codes(diagnostics)).toContain('alternative-variable-mismatch');
+  });
+
   it('rejects a completed expert review without reviewer and date', () => {
     const input = mutated((kb) => {
       kb.quantities[0].review = { formulation: 'standard-school', expert: 'completed' };

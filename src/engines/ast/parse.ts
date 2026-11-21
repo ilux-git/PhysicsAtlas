@@ -9,7 +9,8 @@ export type ParseErrorCode =
   | 'unknown-function'
   | 'missing-parenthesis'
   | 'invalid-exponent'
-  | 'invalid-equation';
+  | 'invalid-equation'
+  | 'unsupported-latex';
 
 export class FormulaParseError extends Error {
   readonly code: ParseErrorCode;

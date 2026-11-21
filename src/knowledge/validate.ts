@@ -6,7 +6,8 @@ import type {
   EntityKind,
   KnowledgeInput,
 } from '../domain/types.ts';
-import { astToInfix } from '../engines/ast/parse.ts';
+import { astToInfix, FormulaParseError } from '../engines/ast/parse.ts';
+import { parseDisplayEquation } from '../engines/ast/latex.ts';
 import { solveFor, solvedSideVariable } from '../engines/ast/solve.ts';
 import { checkEquationDimensions } from '../engines/dimensions.ts';
 
@@ -258,20 +259,43 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
     }
 
     const forms = [
-      { label: 'основная форма', lhs: equation.lhsAst, rhs: equation.rhsAst, latex: equation.displayLatex },
+      {
+        label: 'основная форма',
+        lhs: equation.lhsAst,
+        rhs: equation.rhsAst,
+        latex: equation.displayLatex,
+        isPrimary: true,
+      },
       ...equation.alternativeForms.map((form) => ({
         label: `форма «${form.id}»`,
         lhs: form.lhsAst,
         rhs: form.rhsAst,
         latex: form.displayLatex,
+        isPrimary: false,
       })),
     ];
+    const primaryVariableIds = new Set([
+      ...collectQuantityIds(equation.lhsAst),
+      ...collectQuantityIds(equation.rhsAst),
+    ]);
 
     for (const form of forms) {
       const variableIds = new Set([
         ...collectQuantityIds(form.lhs),
         ...collectQuantityIds(form.rhs),
       ]);
+      if (!form.isPrimary) {
+        const sameVariables =
+          variableIds.size === primaryVariableIds.size &&
+          [...variableIds].every((variableId) => primaryVariableIds.has(variableId));
+        if (!sameVariables) {
+          error(
+            'alternative-variable-mismatch',
+            `Набор величин ${form.label} уравнения «${equation.id}» не совпадает с основной формой.`,
+            equation.id,
+          );
+        }
+      }
       for (const variableId of variableIds) {
         const quantity = quantities.get(variableId);
         if (!quantity) {
@@ -288,6 +312,31 @@ export function validateKnowledge(input: KnowledgeInput): Diagnostic[] {
             `В отображении «${form.latex}» нет символа «${quantity.symbol}» величины «${quantity.id}» (уравнение «${equation.id}», ${form.label}).`,
             equation.id,
           );
+        }
+      }
+
+      try {
+        const parsed = parseDisplayEquation(form.latex, { symbols });
+        if (!astEquals(parsed.lhs, form.lhs) || !astEquals(parsed.rhs, form.rhs)) {
+          error(
+            'display-ast-mismatch',
+            `Отображение ${form.label} уравнения «${equation.id}» не соответствует AST: «${astToInfix(parsed.lhs, quantitySymbols)} = ${astToInfix(parsed.rhs, quantitySymbols)}» вместо «${astToInfix(form.lhs, quantitySymbols)} = ${astToInfix(form.rhs, quantitySymbols)}».`,
+            equation.id,
+          );
+        }
+      } catch (parseError) {
+        if (parseError instanceof FormulaParseError) {
+          const code =
+            parseError.code === 'unsupported-latex'
+              ? 'display-latex-unsupported'
+              : 'display-parse-error';
+          error(
+            code,
+            `Отображение ${form.label} уравнения «${equation.id}» не разбирается: ${parseError.message}`,
+            equation.id,
+          );
+        } else {
+          throw parseError;
         }
       }
     }

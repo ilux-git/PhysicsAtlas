@@ -58,7 +58,7 @@ export function astEquals(a: AstNode, b: AstNode): boolean {
     case 'variable':
       return b.type === 'variable' && a.quantityId === b.quantityId;
     case 'constant':
-      return b.type === 'constant' && a.name === b.name && a.value === b.value;
+      return b.type === 'constant' && a.value === b.value;
     case 'add':
     case 'subtract':
     case 'multiply':
