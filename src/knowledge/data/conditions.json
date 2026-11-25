@@ -1,0 +1,242 @@
+﻿[
+  {
+    "id": "cond.inertial-frame",
+    "kind": "condition",
+    "slug": "inertial-frame",
+    "name": { "ru": "Инерциальная система отсчёта", "en": "Inertial reference frame" },
+    "aliases": [],
+    "description": {
+      "ru": "Система отсчёта, в которой тело, не испытывающее внешних сил, движется равномерно и прямолинейно."
+    },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Формулы с силой и ускорением применяются в инерциальной системе отсчёта." } },
+      "9": { "summary": { "ru": "Второй закон Ньютона записывается в инерциальной системе отсчёта." } },
+      "10-11": { "summary": { "ru": "Инерциальность системы отсчёта — условие векторной формы второго закона Ньютона." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "frame", "value": "inertial" }
+  },
+  {
+    "id": "cond.constant-mass",
+    "kind": "condition",
+    "slug": "constant-mass",
+    "name": { "ru": "Постоянная масса", "en": "Constant mass" },
+    "aliases": [],
+    "description": { "ru": "Масса тела не меняется в рассматриваемом процессе." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Масса тела считается неизменной." } },
+      "9": { "summary": { "ru": "Запись F = ma предполагает постоянную массу тела." } },
+      "10-11": { "summary": { "ru": "При переменной массе используют F = dp/dt, а не F = ma." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "constancy", "quantityId": "q.mass" }
+  },
+  {
+    "id": "cond.constant-force",
+    "kind": "condition",
+    "slug": "constant-force",
+    "name": { "ru": "Постоянная сила", "en": "Constant force" },
+    "aliases": [],
+    "description": { "ru": "Сила не меняется по модулю и направлению на рассматриваемом перемещении." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Формула A = Fs верна, если сила не меняется." } },
+      "9": { "summary": { "ru": "Для постоянной силы работа равна произведению силы на перемещение." } },
+      "10-11": { "summary": { "ru": "A = Fs — частный случай; в общем случае работа вычисляется как интеграл силы по перемещению." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "constancy", "quantityId": "q.force" }
+  },
+  {
+    "id": "cond.force-along-displacement",
+    "kind": "condition",
+    "slug": "force-along-displacement",
+    "name": { "ru": "Сила вдоль перемещения", "en": "Force along displacement" },
+    "aliases": [],
+    "description": { "ru": "Вектор силы направлен вдоль вектора перемещения (или перемещение направлено вдоль силы)." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Сила действует вдоль направления движения тела." } },
+      "9": { "summary": { "ru": "При угле между силой и перемещением A = Fs cos α; формула A = Fs соответствует α = 0." } },
+      "10-11": { "summary": { "ru": "A = Fs — проекция силы на направление перемещения, умноженная на модуль перемещения." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "direction", "quantityId": "q.force", "value": "along-displacement" }
+  },
+  {
+    "id": "cond.uniform-motion",
+    "kind": "condition",
+    "slug": "uniform-motion",
+    "name": { "ru": "Равномерное движение", "en": "Uniform motion" },
+    "aliases": [],
+    "description": { "ru": "Скорость тела постоянна по модулю и направлению." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Тело движется с постоянной скоростью." } },
+      "9": { "summary": { "ru": "При равномерном движении перемещение пропорционально времени: s = vt." } },
+      "10-11": { "summary": { "ru": "v = s/t описывает среднюю скорость; при равномерном движении средняя и мгновенная скорости совпадают." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "constancy", "quantityId": "q.velocity" }
+  },
+  {
+    "id": "cond.nonzero-time",
+    "kind": "condition",
+    "slug": "nonzero-time",
+    "name": { "ru": "Интервал времени не равен нулю", "en": "Non-zero time interval" },
+    "aliases": [],
+    "description": { "ru": "Деление на интервал времени допустимо только при t ≠ 0." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Время в знаменателе не должно быть нулевым." } },
+      "9": { "summary": { "ru": "Скорость и мощность определяются как отношения, поэтому интервал времени должен быть отличен от нуля." } },
+      "10-11": { "summary": { "ru": "При t → 0 отношение перемещения к времени переходит в мгновенную скорость; для средних величин t > 0." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "nonzero", "quantityId": "q.time" }
+  },
+  {
+    "id": "cond.nonzero-mass",
+    "kind": "condition",
+    "slug": "nonzero-mass",
+    "name": { "ru": "Масса не равна нулю", "en": "Non-zero mass" },
+    "aliases": [],
+    "description": { "ru": "Масса тела положительна, поэтому деление на массу допустимо." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Масса тела не может быть нулевой." } },
+      "9": { "summary": { "ru": "При выражении ускорения через силу делим на массу, поэтому m ≠ 0." } },
+      "10-11": { "summary": { "ru": "В классической механике масса тела положительна." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "nonzero", "quantityId": "q.mass" }
+  },
+  {
+    "id": "cond.nonzero-displacement",
+    "kind": "condition",
+    "slug": "nonzero-displacement",
+    "name": { "ru": "Перемещение не равно нулю", "en": "Non-zero displacement" },
+    "aliases": [],
+    "description": { "ru": "Выражение силы через работу требует ненулевого перемещения." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Если перемещения нет, работа равна нулю, и выразить силу через работу нельзя." } },
+      "9": { "summary": { "ru": "Деление на перемещение допустимо только при s ≠ 0." } },
+      "10-11": { "summary": { "ru": "При s = 0 формула A = Fs не позволяет определить силу." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "nonzero", "quantityId": "q.displacement" }
+  },
+  {
+    "id": "cond.nonzero-power",
+    "kind": "condition",
+    "slug": "nonzero-power",
+    "name": { "ru": "Мощность не равна нулю", "en": "Non-zero power" },
+    "aliases": [],
+    "description": { "ru": "Выражение времени через работу и мощность требует ненулевой мощности." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Если мощность равна нулю, время по формуле t = A/P не определить." } },
+      "9": { "summary": { "ru": "Деление на мощность допустимо только при P ≠ 0." } },
+      "10-11": { "summary": { "ru": "При P = 0 соотношение A = Pt не позволяет найти время." } }
+    },
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "nonzero", "quantityId": "q.power" }
+  },
+  {
+    "id": "cond.ohmic-element",
+    "kind": "condition",
+    "slug": "ohmic-element",
+    "name": { "ru": "Омический элемент", "en": "Ohmic element" },
+    "aliases": [],
+    "description": { "ru": "Элемент цепи имеет линейную вольт-амперную характеристику и подчиняется закону Ома." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Проводник ведёт себя как обычное сопротивление." } },
+      "9": { "summary": { "ru": "Закон Ома применим к участку цепи с линейной вольт-амперной характеристикой." } },
+      "10-11": { "summary": { "ru": "Омический элемент: сопротивление не зависит от напряжения и тока в рассматриваемом диапазоне." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "material", "value": "ohmic" }
+  },
+  {
+    "id": "cond.constant-resistance",
+    "kind": "condition",
+    "slug": "constant-resistance",
+    "name": { "ru": "Постоянное сопротивление", "en": "Constant resistance" },
+    "aliases": [],
+    "description": { "ru": "Сопротивление участка цепи не меняется в рассматриваемом процессе." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Сопротивление считается неизменным." } },
+      "9": { "summary": { "ru": "Формула закона Ома используется при постоянном сопротивлении." } },
+      "10-11": { "summary": { "ru": "Нагрев или деформация могут изменить сопротивление и нарушить применимость закона Ома." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "constancy", "quantityId": "q.resistance" }
+  },
+  {
+    "id": "cond.steady-current",
+    "kind": "condition",
+    "slug": "steady-current",
+    "name": { "ru": "Постоянный ток", "en": "Steady current" },
+    "aliases": [],
+    "description": { "ru": "Сила тока постоянна на рассматриваемом интервале времени." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Ток не меняется за рассматриваемое время." } },
+      "9": { "summary": { "ru": "Постоянный ток означает, что сила тока не меняется на рассматриваемом интервале времени." } },
+      "10-11": { "summary": { "ru": "При переменном токе заряд вычисляется как интеграл силы тока по времени." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "constancy", "quantityId": "q.current" }
+  },
+  {
+    "id": "cond.same-element",
+    "kind": "condition",
+    "slug": "same-element",
+    "name": { "ru": "Один и тот же элемент цепи", "en": "Same circuit element" },
+    "aliases": [],
+    "description": { "ru": "Напряжение и сила тока в формуле мощности относятся к одному и тому же элементу цепи." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Напряжение и ток берутся для одного и того же участка цепи." } },
+      "9": { "summary": { "ru": "Нельзя подставлять напряжение одного элемента с током другого." } },
+      "10-11": { "summary": { "ru": "P = UI — мощность, выделяемая на элементе, к которому относятся и U, и I." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "material", "value": "same-element" }
+  },
+  {
+    "id": "cond.nonzero-resistance",
+    "kind": "condition",
+    "slug": "nonzero-resistance",
+    "name": { "ru": "Сопротивление не равно нулю", "en": "Non-zero resistance" },
+    "aliases": [],
+    "description": { "ru": "Выражение силы тока через напряжение и сопротивление требует ненулевого сопротивления." },
+    "levelPresentations": {
+      "7-8": { "summary": { "ru": "Делить на сопротивление можно только при R ≠ 0." } },
+      "9": { "summary": { "ru": "Формула I = U/R не определена при нулевом сопротивлении." } },
+      "10-11": { "summary": { "ru": "Для идеального проводника R = 0 рассматривают отдельную модель." } }
+    },
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "structured": { "type": "nonzero", "quantityId": "q.resistance" }
+  }
+]

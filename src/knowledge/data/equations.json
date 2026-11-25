@@ -1,0 +1,333 @@
+﻿[
+  {
+    "id": "eq.newton2.magnitudes",
+    "kind": "equation",
+    "slug": "newton-second-magnitudes",
+    "name": { "ru": "Второй закон Ньютона (модули)", "en": "Newton's second law (magnitudes)" },
+    "aliases": [{ "ru": "F = ma" }],
+    "description": {
+      "ru": "Скалярная запись второго закона Ньютона через модули силы, массы и ускорения; направление ускорения совпадает с направлением равнодействующей силы."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.force" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.mass" },
+      "right": { "type": "variable", "quantityId": "q.acceleration" }
+    },
+    "displayLatex": "F = m a",
+    "alternativeForms": [],
+    "lawRefs": ["law.newton.second"],
+    "conditionRefs": ["cond.inertial-frame", "cond.constant-mass"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули; направление ускорения совпадает с направлением равнодействующей силы." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.newton2.acceleration",
+    "kind": "equation",
+    "slug": "newton-second-acceleration",
+    "name": { "ru": "Ускорение из второго закона Ньютона", "en": "Acceleration from Newton's second law" },
+    "aliases": [{ "ru": "a = F/m" }],
+    "description": {
+      "ru": "Выражение ускорения через равнодействующую силу и массу; алгебраическое следствие записи F = ma при ненулевой массе."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "derived", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.acceleration" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.force" },
+      "right": { "type": "variable", "quantityId": "q.mass" }
+    },
+    "displayLatex": "a = \\frac{F}{m}",
+    "alternativeForms": [],
+    "lawRefs": ["law.newton.second"],
+    "conditionRefs": ["cond.inertial-frame", "cond.constant-mass", "cond.nonzero-mass"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули; при нулевой массе выражение не определено." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.work.constant-force",
+    "kind": "equation",
+    "slug": "work-constant-force",
+    "name": { "ru": "Работа постоянной силы вдоль перемещения", "en": "Work of a constant force along displacement" },
+    "aliases": [{ "ru": "A = Fs" }],
+    "description": {
+      "ru": "Работа постоянной силы, направленной вдоль перемещения. Это частный случай общего определения работы."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "definition", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.work" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.force" },
+      "right": { "type": "variable", "quantityId": "q.displacement" }
+    },
+    "displayLatex": "A = F s",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.constant-force", "cond.force-along-displacement"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Сила постоянна и направлена вдоль перемещения; угол между силой и перемещением равен нулю." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.work.force",
+    "kind": "equation",
+    "slug": "work-force",
+    "name": { "ru": "Сила из работы", "en": "Force from work" },
+    "aliases": [{ "ru": "F = A/s" }],
+    "description": {
+      "ru": "Выражение постоянной силы через работу и перемещение; допустимо при ненулевом перемещении."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "formulation": "derived", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.force" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.displacement" }
+    },
+    "displayLatex": "F = \\frac{A}{s}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.constant-force", "cond.force-along-displacement", "cond.nonzero-displacement"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевом перемещении работа равна нулю, и сила из работы не определяется." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.average",
+    "kind": "equation",
+    "slug": "power-average",
+    "name": { "ru": "Средняя мощность за интервал", "en": "Average power over an interval" },
+    "aliases": [{ "ru": "P = A/t" }],
+    "description": {
+      "ru": "Средняя мощность равна отношению работы к интервалу времени. Для мгновенной мощности нужен предельный переход."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "definition", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.power" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "P = \\frac{A}{t}",
+    "alternativeForms": [
+      {
+        "id": "eq.power.average.form.work",
+        "note": { "ru": "Произведение средней мощности на интервал времени; алгебраическая форма того же уравнения." },
+        "lhsAst": { "type": "variable", "quantityId": "q.work" },
+        "rhsAst": {
+          "type": "multiply",
+          "left": { "type": "variable", "quantityId": "q.power" },
+          "right": { "type": "variable", "quantityId": "q.time" }
+        },
+        "displayLatex": "A = P t"
+      }
+    ],
+    "lawRefs": [],
+    "conditionRefs": ["cond.nonzero-time"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Величина средняя за интервал; интервал времени должен быть ненулевым." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.time",
+    "kind": "equation",
+    "slug": "power-time",
+    "name": { "ru": "Время из работы и мощности", "en": "Time from work and power" },
+    "aliases": [{ "ru": "t = A/P" }],
+    "description": {
+      "ru": "Выражение интервала времени через работу и среднюю мощность; требует ненулевой мощности."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "derived", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.time" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.work" },
+      "right": { "type": "variable", "quantityId": "q.power" }
+    },
+    "displayLatex": "t = \\frac{A}{P}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.nonzero-power"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевой мощности время из работы не определяется." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.velocity.uniform",
+    "kind": "equation",
+    "slug": "uniform-velocity",
+    "name": { "ru": "Скорость при равномерном движении", "en": "Velocity of uniform motion" },
+    "aliases": [{ "ru": "v = s/t" }],
+    "description": {
+      "ru": "Модуль скорости при равномерном прямолинейном движении равен отношению модуля перемещения к интервалу времени."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.mechanics"],
+    "sources": ["source.peryshkin-7-9"],
+    "review": { "formulation": "definition", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.velocity" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.displacement" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "v = \\frac{s}{t}",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.uniform-motion", "cond.nonzero-time"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Запись через модули для равномерного движения; при неравномерном движении отношение s/t даёт среднюю скорость, но отдельный вычислительный путь для неё в атласе не моделируется." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.ohm.local",
+    "kind": "equation",
+    "slug": "ohm-local",
+    "name": { "ru": "Закон Ома для участка цепи", "en": "Ohm's law for a circuit section" },
+    "aliases": [{ "ru": "U = IR" }],
+    "description": {
+      "ru": "Связь напряжения, силы тока и сопротивления на омическом участке цепи при постоянном сопротивлении."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "standard-school", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.voltage" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.current" },
+      "right": { "type": "variable", "quantityId": "q.resistance" }
+    },
+    "displayLatex": "U = I R",
+    "alternativeForms": [],
+    "lawRefs": ["law.ohm"],
+    "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Скалярная запись для участка цепи; подразумевается один и тот же участок для U и I." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.ohm.current",
+    "kind": "equation",
+    "slug": "ohm-current",
+    "name": { "ru": "Сила тока по закону Ома", "en": "Current from Ohm's law" },
+    "aliases": [{ "ru": "I = U/R" }],
+    "description": {
+      "ru": "Выражение силы тока через напряжение и сопротивление; алгебраическое следствие закона Ома при R ≠ 0."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "derived", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.current" },
+    "rhsAst": {
+      "type": "divide",
+      "left": { "type": "variable", "quantityId": "q.voltage" },
+      "right": { "type": "variable", "quantityId": "q.resistance" }
+    },
+    "displayLatex": "I = \\frac{U}{R}",
+    "alternativeForms": [],
+    "lawRefs": ["law.ohm"],
+    "conditionRefs": ["cond.ohmic-element", "cond.constant-resistance", "cond.nonzero-resistance"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "При нулевом сопротивлении выражение не определено." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.charge.current",
+    "kind": "equation",
+    "slug": "charge-through-current",
+    "name": { "ru": "Заряд через силу тока", "en": "Charge from current" },
+    "aliases": [{ "ru": "Q = I t" }],
+    "description": {
+      "ru": "Заряд, прошедший через сечение проводника при постоянном токе, равен произведению силы тока на время."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.peryshkin-7-9", "source.myakishev-10-11"],
+    "review": { "formulation": "definition", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.charge" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.current" },
+      "right": { "type": "variable", "quantityId": "q.time" }
+    },
+    "displayLatex": "Q = I t",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.steady-current"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Постоянный ток; при переменном токе нужен интеграл по времени." }
+    },
+    "conditionsStatus": "explicit"
+  },
+  {
+    "id": "eq.power.electric",
+    "kind": "equation",
+    "slug": "electric-power",
+    "name": { "ru": "Мощность электрического тока", "en": "Electric power" },
+    "aliases": [{ "ru": "P = UI" }],
+    "description": {
+      "ru": "Мгновенная мощность на элементе цепи равна произведению напряжения на силу тока через этот элемент. В атласе формула применяется к постоянному току; средняя мощность в цепи переменного тока требует коэффициента мощности и здесь не моделируется."
+    },
+    "levelPresentations": {},
+    "domains": ["domain.electricity"],
+    "sources": ["source.myakishev-10-11"],
+    "review": { "formulation": "derived", "expert": "none" },
+    "lhsAst": { "type": "variable", "quantityId": "q.power" },
+    "rhsAst": {
+      "type": "multiply",
+      "left": { "type": "variable", "quantityId": "q.voltage" },
+      "right": { "type": "variable", "quantityId": "q.current" }
+    },
+    "displayLatex": "P = U I",
+    "alternativeForms": [],
+    "lawRefs": [],
+    "conditionRefs": ["cond.same-element", "cond.steady-current"],
+    "form": {
+      "kind": "magnitudes",
+      "note": { "ru": "Постоянный ток; U и I относятся к одному элементу цепи. Мгновенные значения при переменном токе имеют ту же запись, но средняя мощность требует коэффициента мощности, который не моделируется." }
+    },
+    "conditionsStatus": "explicit"
+  }
+]

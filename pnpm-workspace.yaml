@@ -1,0 +1,8 @@
+packages:
+  - '.'
+
+storeDir: D:/github/PhysicsAtlas/.pnpm-store
+nodeLinker: hoisted
+strictPeerDependencies: false
+onlyBuiltDependencies:
+  - esbuild
